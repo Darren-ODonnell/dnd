@@ -1,14 +1,15 @@
 import './App.css';
-import Teamsheet from "./Teamsheet";
-import TeamBuilder from "./TeamBuilder";
-import PlayerList from "./Draggable";
-import Droppable from "./Droppable";
+import Teamsheet from "./archive/Teamsheet";
+import TeamBuilder from "./archive/TeamBuilder";
+import PlayerList from "./archive/Draggable";
+import Droppable from "./archive/Droppable";
+import Example from "./dragndrop/DragnDropExample";
 
 
 function App() {
   return (
     <div className="App">
-        <Droppable />
+        <Example />
       <PlayerList />
     </div>
   );
