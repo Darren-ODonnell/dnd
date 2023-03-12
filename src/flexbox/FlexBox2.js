@@ -1,15 +1,54 @@
-import React from "react";
-import './flexbox2.css'
-import {RowOfThree, RowKeeper, RowOfTwo, ColPanel, ColSubs, SingleBox} from './TeamLayoutBlocks'
+import React, {useEffect, useState} from "react";
+import {RowOfThree, RowKeeper, RowOfTwo, SingleBox} from './TeamLayoutBlocks'
 import styled from "styled-components";
-import DraggableList from "../dragndrop/DraggableList";
 import {DndProvider} from "react-dnd";
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import {Button} from "@mui/material"; // Replace with the path to your grass texture image file
 import '../dragndrop/dradndrop.css'
-import grassTexture from '../media/Background-Grass.png'; // Replace with the path to your grass texture image file
+import './flexbox2.css'
+import grassTexture from '../media/Background-Grass.png';
 
 
 const Layout = ({data}) => {
+    const [team, setTeam] = useState([])
+    const [subs, setSubs] = useState([])
+    const [panel, setPanel] = useState([])
+    const [players, setPlayers] = useState([])
+    const [teamsheet, setTeamsheet] = useState([])
+    const [fixtureDate, setFixtureDate] = useState(new Date())
+
+
+    const getPlayers=()=> {
+
+    }
+    const getTeamsheet=()=> {
+
+    }
+    const getFixtureDate=()=> {
+
+    }
+    const getTeam=()=> {
+
+    }
+    const getSubs=()=> {
+
+    }
+    const getPanel=()=> {
+
+    }
+
+
+    useEffect(() => {
+        setPlayers(getPlayers())
+        setTeamsheet(getTeamsheet())
+        setFixtureDate(getFixtureDate())
+        setTeam(getTeam(teamsheet))
+        setSubs(getSubs(teamsheet))
+        setPanel(getPanel(teamsheet))
+    },[teamsheet])
+
+
+
     // cell dimensions
     const height = 60 // position  cell height
     const width = 150 // position cell width
@@ -17,14 +56,11 @@ const Layout = ({data}) => {
     const cells = 12 // height of column in posn locations
     // column dimensions
     const colHeight = height * cells
-    const colWidth = width
     const spacer = width / 4
     const margin = spacer
-    let startRow = margin
+    let startRow = margin // creates clear space at the top of the container
 
-    const dragColWidth = width + 30
-
-
+    const dragColWidth = width + 30 // width of the left and right columns
 
     const threeColStart = dragColWidth + spacer
     const twoColStart = dragColWidth + spacer * 3
@@ -44,11 +80,45 @@ const Layout = ({data}) => {
         left: 50px;
         border: 2px solid black;
         height: ${colHeight + margin * 2}px;
-        width: ${dragColWidth* 2 + width * 3 + spacer * 6  }px;
+        width: ${dragColWidth* 2 + width * 3 + spacer * 6 }px;
         background: green;
         border-radius: 10px;
       background: url(${grassTexture});
       `;
+
+    const buttonCommon = {
+        position: 'absolute',
+        top: 730,
+        height: 50,
+        width: width,
+        type: "",
+        variant: "outlined",
+        color: 'white',
+        borderRadius: 15,
+    }
+
+
+    const buttonSaveStyle = {
+        ...buttonCommon,
+        left: margin + dragColWidth + spacer * 3,
+        type: "",
+        backgroundColor: '#3f51b5',
+    }
+    const buttonCancelStyle = {
+        ...buttonCommon,
+        left: 570,
+        backgroundColor: '#f50057',
+    }
+
+
+    const handleFormSubmit = ({formValues, setOpen, error}) => {
+
+    }
+
+    const handleClose = () => {
+
+    }
+
 
     return (
         <>
@@ -62,6 +132,9 @@ const Layout = ({data}) => {
                 <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {10} gap={spacer}/>
                 <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {13} gap={spacer}/>
                 <SingleBox  colStart = {margin + subsStartCol - 40}   rowStart = {subsStartRow}                    height   = {colHeight -7 } width = {dragColWidth} posn = {"Subs"} gap={spacer}/>
+
+                <Button onClick={() => handleClose()}  style={buttonSaveStyle}                      >Cancel </Button>
+                <Button onClick={() => handleFormSubmit()} style={buttonCancelStyle} type="submit"  >Save   </Button>
             </Container>
 
         </>
