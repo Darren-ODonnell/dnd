@@ -6,6 +6,8 @@ import DraggableList from "../dragndrop/DraggableList";
 import {DndProvider} from "react-dnd";
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import '../dragndrop/dradndrop.css'
+import grassTexture from '../media/Background-Grass.png'; // Replace with the path to your grass texture image file
+
 
 const Layout = ({data}) => {
     // cell dimensions
@@ -45,6 +47,7 @@ const Layout = ({data}) => {
         width: ${dragColWidth* 2 + width * 3 + spacer * 6  }px;
         background: green;
         border-radius: 10px;
+      background: url(${grassTexture});
       `;
 
     return (
