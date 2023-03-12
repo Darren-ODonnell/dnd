@@ -7,6 +7,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './dradndrop.css'
 
+
 const Example = (props) => {
 
     const [draggedItems, setDraggedItems] = useState([]);
@@ -26,7 +27,8 @@ const Example = (props) => {
             return;
         }
 
-        const newItems = reorder(items, result.source.index, result.destination.index);
+
+    const newItems = reorder(items, result.source.index, result.destination.index);
         setItems(newItems);
     };
     const handleDrop = (item) => {

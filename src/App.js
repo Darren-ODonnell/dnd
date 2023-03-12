@@ -1,9 +1,8 @@
 import './App.css';
-import Teamsheet from "./archive/Teamsheet";
-import TeamBuilder from "./archive/TeamBuilder";
-import PlayerList from "./archive/Draggable";
-import Droppable from "./archive/Droppable";
-import Example from "./dragndrop/DragnDropExample";
+
+import FlexBox2 from "./flexbox/FlexBox2";
+import DraggableList from "./dragndrop/DraggableList";
+
 const names = [
     "John Smith",
     "Emma Johnson",
@@ -25,8 +24,12 @@ const names = [
 function App() {
   return (
     <div className="App">
-        <Example />
-      <PlayerList />
+        {/*<GridComponent />?*/}
+        {/*<GaelicFootballTeam />*/}
+        {/*<GAAForm team={names}/>*/}
+        {/*<DraggableList data={names} />*/}
+        <FlexBox2/>
+        {/*<Example data={names}/>*/}
     </div>
   );
 }
