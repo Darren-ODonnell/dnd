@@ -32,3 +32,13 @@
     flex: 1;
 
 }
+
+.buttonCommon  {
+    position: absolute;
+    top: 730px;
+    height: 50px;
+    width: width;
+    variant: "outlined";
+    color: white;
+    borderRadius: 15;
+}

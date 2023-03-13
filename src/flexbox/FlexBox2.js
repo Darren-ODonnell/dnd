@@ -7,44 +7,74 @@ import {Button} from "@mui/material"; // Replace with the path to your grass tex
 import '../dragndrop/dradndrop.css'
 import './flexbox2.css'
 import grassTexture from '../media/Background-Grass.png';
+import BoxContainer from "./BoxContainer";
+
+const players = [
+    { id: 1, name: "John Smith", position: "Forward" },
+    { id: 2, name: "Mary Johnson", position: "Midfielder" },
+    { id: 3, name: "James Williams", position: "Defender" },
+    { id: 4, name: "Elizabeth Brown", position: "Goalkeeper" },
+    { id: 5, name: "David Garcia", position: "Forward" },
+    { id: 6, name: "Sarah Lee", position: "Midfielder" },
+    { id: 7, name: "Michael Martin", position: "Defender" },
+    { id: 8, name: "Emily Davis", position: "Goalkeeper" },
+    { id: 9, name: "Christopher Rodriguez", position: "Forward" },
+    { id: 10, name: "Ashley Martinez", position: "Midfielder" },
+    { id: 11, name: "Matthew Hernandez", position: "Defender" },
+    { id: 12, name: "Samantha Lopez", position: "Goalkeeper" },
+    { id: 13, name: "Joshua Gonzalez", position: "Forward" },
+    { id: 14, name: "Amanda Taylor", position: "Midfielder" },
+    { id: 15, name: "Kevin Phillips", position: "Defender" },
+];
+
 
 
 const Layout = ({data}) => {
     const [team, setTeam] = useState([])
     const [subs, setSubs] = useState([])
     const [panel, setPanel] = useState([])
-    const [players, setPlayers] = useState([])
+    const [players1, setPlayers1] = useState([])
     const [teamsheet, setTeamsheet] = useState([])
     const [fixtureDate, setFixtureDate] = useState(new Date())
+    // const [data, error, loading, axiosApi] = useAxios()
 
 
-    const getPlayers=()=> {
 
-    }
-    const getTeamsheet=()=> {
-
-    }
-    const getFixtureDate=()=> {
+    const handleTeamChange = (e) => {
 
     }
-    const getTeam=()=> {
+    const handleSubsChange = (e) => {
 
     }
-    const getSubs=()=> {
+    const handlePanelChange = (e) => {
 
     }
-    const getPanel=()=> {
+    const getPlayers = () => {
 
     }
+    const getTeamsheet = () => {
 
+    }
+    const getFixtureDate = () => {
+
+    }
+    const getTeam = () => {
+
+    }
+    const getSubs = () => {
+
+    }
+    const getPanel = () => {
+
+    }
 
     useEffect(() => {
-        setPlayers(getPlayers())
-        setTeamsheet(getTeamsheet())
-        setFixtureDate(getFixtureDate())
-        setTeam(getTeam(teamsheet))
-        setSubs(getSubs(teamsheet))
-        setPanel(getPanel(teamsheet))
+        setPlayers1( getPlayers() )
+        setTeamsheet( getTeamsheet() )
+        setFixtureDate( getFixtureDate() )
+        setTeam( getTeam(teamsheet) )
+        setSubs( getSubs(teamsheet) )
+        setPanel( getPanel(teamsheet) )
     },[teamsheet])
 
 
@@ -101,7 +131,7 @@ const Layout = ({data}) => {
     const buttonSaveStyle = {
         ...buttonCommon,
         left: margin + dragColWidth + spacer * 3,
-        type: "",
+        type: "submit",
         backgroundColor: '#3f51b5',
     }
     const buttonCancelStyle = {
@@ -112,26 +142,32 @@ const Layout = ({data}) => {
 
 
     const handleFormSubmit = ({formValues, setOpen, error}) => {
-
+        console.log("FlexBox : Save Clicked")
     }
 
     const handleClose = () => {
-
+        console.log("FlexBox : Cancel Close Clicked")
     }
 
+    const handleDrop = (data) => {
+        // Handle the data that was dropped
+        console.log(data);
+    }
 
     return (
         <>
             <Container>
-                {/*<DraggableList data={data} />*/}
-                <SingleBox  colStart = {panelStartCol}  rowStart = {panelStartRow}                   height   = {height * cells-7 } width = {dragColWidth} posn = {"Panel"} gap={spacer}/>
+                {/*<SingleBox  colStart = {panelStartCol}  rowStart = {panelStartRow}                   height   = {height * cells-7 } width = {dragColWidth} posn = {"Panel"} gap={spacer}/>*/}
+                <BoxContainer maxComponents={80} canDrag={false} players={players} x={0} y={0} onDrop={handleDrop}/>
+
                 <RowKeeper  colStart = {margin + dragColWidth + spacer * 6} rowStart = {startRow}                        height   = {height} width = {width} posn = {1} gap={spacer}/>
-                <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {2} gap={spacer}/>
-                <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {5} gap={spacer}/>
-                <RowOfTwo   colStart = {margin + twoColStart}    rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {8} gap={spacer}/>
-                <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {10} gap={spacer}/>
-                <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {13} gap={spacer}/>
-                <SingleBox  colStart = {margin + subsStartCol - 40}   rowStart = {subsStartRow}                    height   = {colHeight -7 } width = {dragColWidth} posn = {"Subs"} gap={spacer}/>
+                <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {2} gap={spacer} onDrop={handleDrop}/>
+                <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {5} gap={spacer} onDrop={handleDrop}/>
+                <RowOfTwo   colStart = {margin + twoColStart}    rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {8} gap={spacer} onDrop={handleDrop}/>
+                <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {10} gap={spacer} onDrop={handleDrop}/>
+                <RowOfThree colStart = {margin + threeColStart}  rowStart = {startRow  += rowSpace + height}  height   = {height} width = {width} posn = {13} gap={spacer} onDrop={handleDrop}/>
+                {/*<BoxContainer maxComponents={80} canDrag={false} players={players} x={8000} y={0}/>*/}
+                <SingleBox  colStart = {margin + subsStartCol - 40}   rowStart = {subsStartRow}                    height   = {colHeight -7 } width = {dragColWidth} posn = {"Subs"} gap={spacer} onDrop={handleDrop}/>
 
                 <Button onClick={() => handleClose()}  style={buttonSaveStyle}                      >Cancel </Button>
                 <Button onClick={() => handleFormSubmit()} style={buttonCancelStyle} type="submit"  >Save   </Button>
