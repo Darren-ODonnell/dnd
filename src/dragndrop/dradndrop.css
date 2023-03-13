@@ -1,0 +1,68 @@
+
+.dropContainer {
+    width: 150px;
+    height: 50px;
+    border: 5px solid blue;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margins: 20px;
+
+}
+
+.removeButton {
+    cursor: pointer;
+    margin-top: 10px;
+    text-decoration: underline;
+    color: blue;
+}
+
+
+.dragContainer {
+    width: 120px;
+    height: 50px;
+    border: 5px solid black;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 10px;
+}
+
+.draggableField {
+    margin: 5px;
+}
+
+.dndContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.listContainer {
+    width: 150px;
+    height: 600px;
+    overflow-Y: auto;
+    margin: 2px;
+    /*padding: 5px;*/
+    border: 5px solid lightblue;
+    border-radius: 20px;
+    background-color: aliceblue;
+}
+
+.draggableList {
+    padding: 2px;
+    width: 120px;
+    margin: 2mm;
+    border: 6px solid lightblue;
+    border-radius: 10px;
+}
+
+.MuiOutlinedInput-input {
+    padding: 0;
+}
+.MuiOutlinedInput-root {
+    border: none;
+}
