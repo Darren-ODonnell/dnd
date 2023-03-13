@@ -1,23 +1,35 @@
-import logo from './logo.svg';
 import './App.css';
+
+import FlexBox2 from "./flexbox/FlexBox2";
+import DraggableList from "./dragndrop/DraggableList";
+
+const names = [
+    "John Smith",
+    "Emma Johnson",
+    "Michael Davis",
+    "Sarah Williams",
+    "William Brown",
+    "Olivia Wilson",
+    "James Garcia",
+    "Ava Rodriguez",
+    "David Martinez",
+    "Sophia Anderson",
+    "Joseph Taylor",
+    "Emily Jackson",
+    "Christopher White",
+    "Isabella Harris",
+    "Matthew Martin",
+];
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        {/*<GridComponent />?*/}
+        {/*<GaelicFootballTeam />*/}
+        {/*<GAAForm team={names}/>*/}
+        {/*<DraggableList data={names} />*/}
+        <FlexBox2/>
+        {/*<Example data={names}/>*/}
     </div>
   );
 }
