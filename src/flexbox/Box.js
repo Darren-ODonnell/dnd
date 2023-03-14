@@ -65,7 +65,8 @@ const Box = ({ width, height, x, y, id, name, onDrop }) => {
         borderRadius: "10px",
         border: "5px solid lightblue",
         display: "flex",
-        fontSize: "24px",
+        fontSize: "16px",
+        textAlign: 'center',
         cursor: "move",
         opacity: isDragging ? 0.5 : 1,
     };

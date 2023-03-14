@@ -1,0 +1,111 @@
+
+.teamsheet-container {
+    width: 1000px;
+    height: 800px;
+    border: 1px solid black;
+    background-color: lightblue;
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+.container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: mediumpurple;
+}
+
+.panel-container     {
+    display: flex;
+    width           : 18%;
+    height          : 100%;
+    border          : 1px solid red;
+    float           : left;
+    position        : absolute;
+    top             : 0;
+    left            : 0;
+    max-height : 100%;
+    max-width: 18%;
+    overflow: auto;
+    background-color: mediumpurple;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: auto;
+}
+.team-container      {
+    position        : absolute;
+    top             : 0;
+    width           : 64%;
+    height          : 90%;
+    border          : 1px solid green;
+    background-image: url('../media/GAA Pitch.png');
+    background-size : 100% 100%;
+    max-width       : 64%;
+    max-height      : 90%;
+    background-color: mediumpurple;
+
+}
+.subs-container      {
+    width           : 18%;
+    height          : 100%;
+    border          : 1px solid purple;
+    float           : right;
+    position        : absolute;
+    right           : 0;
+    background-color: mediumpurple;
+    max-height : 100%;
+    max-width: 18%;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+
+}
+.action-container    {
+    position        : absolute;
+    bottom          : 0;
+    width           : 64%;
+    height          : 10%;
+    border          : 1px solid pink;
+    display         : flex;
+    /*justify-content : space-between;*/
+    align-items: center;
+    max-height : 10%;
+    max-width: 64%;
+
+}
+.btn {
+    width: 150px;
+    flex-grow: 1;
+    text-align: center;
+    background-color: pink;
+    justify-content: space-between;
+    margin: auto 0;
+}
+
+/* Primary button styles */
+button.but-primary {
+    background-color: #80b0e0;
+    color: white;
+    border-radius: 10px
+}
+/* Secondary button styles */
+button.but-secondary {
+    background-color: #cb91a5;
+    color: white;
+    border-radius: 10px
+}
+
+button.but-primary:hover {
+    background-color: #0d47a1;
+    color: white;
+}
+button.but-secondary:hover {
+    background-color: #c51162;
+    color: white;
+}
+

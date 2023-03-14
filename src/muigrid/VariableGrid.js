@@ -2,148 +2,313 @@ import { DataGrid } from '@mui/x-data-grid';
 import {Button, Grid, Paper} from "@mui/material";
 import Box from "../flexbox/Box";
 import { Container, Row, Col } from 'react-bootstrap';
-
-const columns = [
-    { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'firstName', headerName: 'First Name', width: 150 },
-    { field: 'lastName', headerName: 'Last Name', width: 150 },
-    { field: 'age', headerName: 'Age', width: 100 },
-    { field: 'email', headerName: 'Email', width: 250 },
-    { field: 'phone', headerName: 'Phone', width: 150 },
-    { field: 'address', headerName: 'Address', width: 300 },
-    { field: 'city', headerName: 'City', width: 150 },
-    { field: 'state', headerName: 'State', width: 150 },
-    { field: 'zip', headerName: 'ZIP', width: 100 },
-];
-
-const rows = [
-    { id: 1, firstName: 'John', lastName: 'Doe', age: 35, email: 'johndoe@example.com', phone: '555-555-5555', address: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' },
-    { id: 2, firstName: 'Jane', lastName: 'Doe', age: 30, email: 'janedoe@example.com', phone: '555-555-5555', address: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' },
-    { id: 3, firstName: 'Bob', lastName: 'Smith', age: 40, email: 'bobsmith@example.com', phone: '555-555-5555', address: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' },
-];
+import 'bootstrap/dist/css/bootstrap.min.css'; // import Bootstrap CSS
+import './VariableGrid.css'
+import './teamsheet.css'
+const boxWidth         = 150
+const boxHeight        = 55
+const teamWidth        = 640
+const boxWidthPercent  = boxWidth / teamWidth
+const gapWidth4        = (teamWidth - boxWidth * 3) / 4
+const gapWidth3        = (teamWidth - boxWidth * 2) / 3
+const gapWidthPercent4 = gapWidth4 / teamWidth
+const gapWidthPercent3 = gapWidth3 / teamWidth
 
 
-const teamsheetContainerStyle = {
-        marginTop: '20px',
-        marginLeft: '20px',
-        width: '1000px',
-        height: '800px',
-        border: '1px solid black',
-        position: 'relative',
-        backgroundColor: 'lightblue',
-}
-const panelContainerStyle     = {
-        width: '18%',
-        height: '100%',
-        border: '1px solid red',
-        float: 'left',
-        position: 'absolute',
-        top: '0',
-        left: '0',
-}
-const teamContainerStyle      = {
-        position: 'absolute',
-        top: '0',
-        width: '64%',
-        height: '90%',
-        border: '1px solid green'
-}
-const subsContainerStyle      = {
-        width: '18%',
-        height: '100%',
-        border: '1px solid purple',
-        float: 'right',
-        position: 'absolute',
-        right: '0',
-        backgroundColor: 'lightblue',
-}
-const actionContainerStyle    = {
-        position: 'absolute',
-        bottom: '0',
-        float: 'bottom',
-        width: '64%',
-        height: '10%',
-        border: '1px solid pink',
-}
-
-const TeamsheetContainer = ({panel, team, subs}) => {
+const TeamsheetContainer = ({panel,team, subs, onDrop}) => {
     return (
-        <Container style={teamsheetContainerStyle} >
-            <PanelContainer  panel  = {panel} />
-            <TeamContainer   team   = {team}  />
-            <SubsContainer   subs   = {subs}  />
+        <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>
+            <PanelContainer  panel  = {panel} onDrop = {onDrop}/>
+            <TeamContainer   team   = {team}  onDrop = {onDrop}/>
+            <SubsContainer   subs   = {subs}  onDrop = {onDrop}/>
             <ActionContainer                  />
-
         </Container>
     )
 }
 export default TeamsheetContainer;
 
-const PanelContainer  = ({panel}) => {
+const PanelContainer = ({ panel, onDrop }) => {
+    let nextRow = 0
     return (
-            <Container style={panelContainerStyle} />
-    )
-}
-const TeamContainer   = ({team}) => {
+
+        <Container className="panel-container">
+            {panel.map((member) => {
+                const top = nextRow;
+                nextRow += 60; // Increment nextRow by 50 for the next iteration
+                return (
+                    <Box
+                        key={member.id}
+                        id={member.id}
+                        name={member.name}
+                        width={150}
+                        height={50}
+                        x={0}
+                        y={top}
+                        onDrop={onDrop}
+                    />
+                );
+            })}
+        </Container>
+    );
+};
+const TeamContainer   = ({team, onDrop}) => {
+
+    let index = 0
+    const keeper = {
+        middle: {
+            name: team[ index ].name,
+            poditionNumber: index+1,
+            positionName: "Keeper",
+            id: team[ index ].id,
+        }
+    }
+
+    index+=1
+    const fullBacks = {
+        boxY : boxHeight*2,
+        left: {
+            name: team[ index ].name,
+            poditionNumber: index+1,
+            positionName: "Left Back",
+            id: team[ index ].id,
+        },
+        middle: {
+            name: team[ index+1 ].name,
+            poditionNumber: index+2,
+            positionName: "Full Back",
+            id: team[ index+1 ].id,
+        },
+        right: {
+            name: team[ index+2 ].name,
+            poditionNumber: index+3,
+            positionName: "Right Back",
+            id: team[ index+2 ].id,
+        },
+    }
+    index +=3
+    const halfBacks = {
+        boxY : boxHeight*4,
+        left              : {
+            id            : team[ index ].id,
+            name          : team[ index ].name,
+            poditionNumber: index+1,
+            positionName  : "Left Half Back",
+        },
+        middle            : {
+            id            : team[ index+1 ].id,
+            name          : team[ index+1 ].name,
+            poditionNumber: index+2,
+            positionName  : "Centre Back",
+        },
+        right             : {
+            id            : team[ index+2 ].id,
+            name          : team[ index+2 ].name,
+            poditionNumber: index+3,
+            positionName  : "Right Half Back",
+        },
+    }
+    index+=3
+    const midfielders = {
+        boxY : boxHeight*6,
+        left: {
+            name          : team[ index ].name,
+            id            : team[ index ].id,
+            poditionNumber: index+1,
+            positionName  : "Left Midfield",
+        },
+        right: {
+            name          : team[ index+1 ].name,
+            id            : team[ index+1 ].id,
+            poditionNumber: index+2,
+            positionName  : "Right Midfield",
+
+        },
+    }
+    index+=2
+    const halfForwards = {
+        boxY : boxHeight*8,
+        left              : {
+            id            : team[ index ].id,
+            name          : team[ index ].name,
+            poditionNumber: index+1,
+            positionName  : "Left Half Forward",
+        },
+        middle            : {
+            id            : team[ index+1 ].id,
+            name          : team[ index+1 ].name,
+            poditionNumber: index+2,
+            positionName  : "Centre Forward",
+        },
+        right             : {
+            id            : team[ index+2 ].id,
+            name          : team[ index+2 ].name,
+            poditionNumber: index+3,
+            positionName  : "Right Half Forward",
+        },
+    }
+    index+=3
+    const fullForwards = {
+        boxY : boxHeight*10,
+        left              : {
+            id            : team[ index ].id,
+            name          : team[ index ].name,
+            poditionNumber: index+1,
+            positionName  : "Left Full Forward",
+        },
+        middle            : {
+            id            : team[ index+1 ].id,
+            name          : team[ index+1 ].name,
+            poditionNumber: index+2,
+            positionName  : "Full Forward",
+        },
+        right             : {
+            id            : team[ index+2 ].id,
+            name          : team[ index+2 ].name,
+            poditionNumber: index+3,
+            positionName  : "Right Full Forward",
+        },
+    }
+
+    const ThreeAccross   = ({boxY, left, middle, right}) => {
+        const Left = () => {
+            const boxX = teamWidth * gapWidthPercent4
+            return  (
+                <Box
+                    x      = {boxX}     y      = {boxY}
+                    width  = {boxWidth} height = {boxHeight}
+                    id     = {left.id}  name   = {left.name}
+                    onDrop = {(box , id) => console.log("Dropped box: ", box, " ID: ", id)}
+                />
+            )
+        }
+        const Middle = () => {
+            const boxX = teamWidth * (gapWidthPercent4 * 2 + boxWidthPercent)
+            return  (
+                <Box
+                    x={boxX} y={boxY}
+                    width={boxWidth} height={boxHeight}
+                    id={middle.id}  name={middle.name}
+                    onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
+                />
+            )
+        }
+        const Right = () => {
+            const boxX = teamWidth * (gapWidthPercent4 * 3 + boxWidthPercent * 2)
+            return  (
+                <Box
+                    x={boxX} y={boxY}
+                    width={boxWidth} height={boxHeight}
+                    id={right.id}  name={right.name}
+                    onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
+                />
+            )
+        }
+        return  (
+            <>
+                <Left />
+                <Middle />
+                <Right />
+            </>
+        )
+    }
+    const TwoAcross   = ({boxY, left, middle, right}) => {
+        const Left = () => {
+            const boxX = teamWidth * gapWidthPercent3
+            return  (
+                <Box
+                    x      = {boxX}     y      = {boxY}
+                    width  = {boxWidth} height = {boxHeight}
+                    id     = {left.id}  name   = {left.name}
+                    onDrop = {(box , id) => console.log("Dropped box: ", box, " ID: ", id)}
+                />
+            )
+        }
+
+        const Right = () => {
+            const boxX = teamWidth * (gapWidthPercent3 * 2 + boxWidthPercent )
+            return  (
+                <Box
+                    x={boxX} y={boxY}
+                    width={boxWidth} height={boxHeight}
+                    id={right.id}  name={right.name}
+                    onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
+                />
+            )
+        }
+
+        return  (
+            <>
+                <Left />
+                <Right />
+            </>
+        )
+    }
+    const OneAcross   = ({boxY, left, middle, right}) => {
+
+        const Middle = () => {
+            const boxX = "50%";
+            const boxY = 0;
+
+            return  (
+                <Box
+                    x={boxX} y={boxY}
+                    width={boxWidth} height={boxHeight}
+                    id={middle.id}  name={middle.name}
+                    onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
+                />
+            )
+        }
+        return  <Middle />
+
+    }
+
+
 
     return (
-            <Container style={teamContainerStyle} >
-                <Keeper />
+            <Container className="team-container" >
+                <OneAcross    {...keeper       } />
+                <ThreeAccross {...fullBacks    }/>
+                <ThreeAccross {...halfBacks    }/>
+                <TwoAcross    {...midfielders  }/>
+                <ThreeAccross {...halfForwards }/>
+                <ThreeAccross {...fullForwards }/>
             </Container>
     )
 }
-const SubsContainer   = ({subs}) => {
-    return (
-            <Container style={subsContainerStyle} />
-    )
-}
-const ActionContainer = () => {
-    return (
-        <Container style={actionContainerStyle} >
-            <Button>Cancel</Button>
-            <Button>Save</Button>
-        </Container>
-    )
-}
+const SubsContainer   = ({subs, onDrop}) => {
+        let nextRow = 0
+        return (
 
-const Keeper       = () => {
-    const boxWidth = 130;
-    const boxHeight = 50;
-    const boxX = "50%";
-    const boxY = "10%";
-
-    const boxStyle = {
-        position: "absolute",
-        top: boxY,
-        left: `calc(${boxX} - ${boxWidth / 2}px)`,
-        float: 'center',
+            <Container className="subs-container">
+                {subs.map((member) => {
+                    const top = nextRow;
+                    nextRow += 60; // Increment nextRow by 50 for the next iteration
+                    return (
+                        <Box
+                            key={member.id}
+                            id={member.id}
+                            name={member.name}
+                            width={150}
+                            height={50}
+                            x={0}
+                            y={top}
+                            onDrop={onDrop}
+                        />
+                    );
+                })}
+            </Container>
+        );
     };
 
+
+const ActionContainer = () => {
     return (
-        <Box
-            width={boxWidth}
-            height={boxHeight}
-            x={boxX}
-            y={boxY}
-            id="box1"
-            name="Box 1"
-            onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
-            style={boxStyle}
-        />
-    )
-}
-// const FullBacks    = () => {
-//
-// }
-// const HalfBacks    = () => {
-//
-// }
-// const Midfield     = () => {
-//
-// }
-// const HalfForwards = () => {
-//
-// }
-// const FullForwards = () => {
-//
-// }
+        <Container className="action-container">
+            <div className="btn-group d-flex" role="group">
+                <Button className="btn but-secondary " >Cancel</Button>
+                <Button type="submit" className="btn but-primary ">Save</Button>
+            </div>
+        </Container>
+    );
+};
+
