@@ -16,15 +16,17 @@ const BoxWrapper = styled.div`
   cursor: move;
   draggable: true;
   background-color: ${(props) => (props.isOver ? "lightblue" : "lightgray")};
+  margin: 0 auto;
+  justify-content: center;
   opacity: ${(props) => (props.isDragging ? 0.5 : 1)};
 `;
 
-const Box = ({ width, height, x, y, id, name, onDrop }) => {
+const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
     const ref = useRef(null);
 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "ITEM",
-        item: { name },
+        item: { player },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
             // canDrop: monitor.canDrop(),
@@ -40,9 +42,9 @@ const Box = ({ width, height, x, y, id, name, onDrop }) => {
             const newBox = { left, top, id };
             // Call the onDrop function with the newBox object
 
-            console.log("player id: "+id+ " Player name: "+name)
+            // console.log("player id: "+id+ " Player name: "+name)
 
-            onDrop(newBox, id);
+            onDrop(newBox, id, source, item.player);
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),
@@ -61,17 +63,19 @@ const Box = ({ width, height, x, y, id, name, onDrop }) => {
         height: `${height}px`,
         top: `${y}px`,
         left: `${x}px`,
-        backgroundColor: "lightgray",
+        backgroundColor: "lightblue",
         borderRadius: "10px",
-        border: "5px solid lightblue",
-        display: "flex",
+        border: "5px solid blue",
+        // display: "flex",
         fontSize: "16px",
-        textAlign: 'center',
+        // textAlign: 'center',
         cursor: "move",
+        justifyContent: "center",
         opacity: isDragging ? 0.5 : 1,
+        marginLeft: '5px',
+        ...style,
     };
 
-    console.log("OnDrop Box : "+onDrop)
     return (
         <BoxWrapper
             ref={ref}
@@ -79,7 +83,7 @@ const Box = ({ width, height, x, y, id, name, onDrop }) => {
             isDragging={isDragging}
             isOver={isOver}
         >
-            {name}
+            {player.name}
         </BoxWrapper>
     );
 };

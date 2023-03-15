@@ -1,7 +1,6 @@
-import { DataGrid } from '@mui/x-data-grid';
-import {Button, Grid, Paper} from "@mui/material";
+import {Button} from "@mui/material";
 import Box from "../flexbox/Box";
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; // import Bootstrap CSS
 import './VariableGrid.css'
 import './teamsheet.css'
@@ -39,12 +38,14 @@ const PanelContainer = ({ panel, onDrop }) => {
                     <Box
                         key={member.id}
                         id={member.id}
-                        name={member.name}
+                        player={member}
                         width={150}
                         height={50}
                         x={0}
                         y={top}
                         onDrop={onDrop}
+                        style={{marginLeft: "5px"}}
+                        source="Panel"
                     />
                 );
             })}
@@ -56,8 +57,8 @@ const TeamContainer   = ({team, onDrop}) => {
     let index = 0
     const keeper = {
         middle: {
-            name: team[ index ].name,
-            poditionNumber: index+1,
+            name: team[index].name,
+            positionNumber: index+1,
             positionName: "Keeper",
             id: team[ index ].id,
         }
@@ -68,19 +69,19 @@ const TeamContainer   = ({team, onDrop}) => {
         boxY : boxHeight*2,
         left: {
             name: team[ index ].name,
-            poditionNumber: index+1,
+            positionNumber: index+1,
             positionName: "Left Back",
             id: team[ index ].id,
         },
         middle: {
             name: team[ index+1 ].name,
-            poditionNumber: index+2,
+            positionNumber: index+2,
             positionName: "Full Back",
             id: team[ index+1 ].id,
         },
         right: {
             name: team[ index+2 ].name,
-            poditionNumber: index+3,
+            positionNumber: index+3,
             positionName: "Right Back",
             id: team[ index+2 ].id,
         },
@@ -91,19 +92,19 @@ const TeamContainer   = ({team, onDrop}) => {
         left              : {
             id            : team[ index ].id,
             name          : team[ index ].name,
-            poditionNumber: index+1,
+            positionNumber: index+1,
             positionName  : "Left Half Back",
         },
         middle            : {
             id            : team[ index+1 ].id,
             name          : team[ index+1 ].name,
-            poditionNumber: index+2,
+            positionNumber: index+2,
             positionName  : "Centre Back",
         },
         right             : {
             id            : team[ index+2 ].id,
             name          : team[ index+2 ].name,
-            poditionNumber: index+3,
+            positionNumber: index+3,
             positionName  : "Right Half Back",
         },
     }
@@ -113,13 +114,13 @@ const TeamContainer   = ({team, onDrop}) => {
         left: {
             name          : team[ index ].name,
             id            : team[ index ].id,
-            poditionNumber: index+1,
+            positionNumber: index+1,
             positionName  : "Left Midfield",
         },
         right: {
             name          : team[ index+1 ].name,
             id            : team[ index+1 ].id,
-            poditionNumber: index+2,
+            positionNumber: index+2,
             positionName  : "Right Midfield",
 
         },
@@ -130,19 +131,19 @@ const TeamContainer   = ({team, onDrop}) => {
         left              : {
             id            : team[ index ].id,
             name          : team[ index ].name,
-            poditionNumber: index+1,
+            positionNumber: index+1,
             positionName  : "Left Half Forward",
         },
         middle            : {
             id            : team[ index+1 ].id,
             name          : team[ index+1 ].name,
-            poditionNumber: index+2,
+            positionNumber: index+2,
             positionName  : "Centre Forward",
         },
         right             : {
             id            : team[ index+2 ].id,
             name          : team[ index+2 ].name,
-            poditionNumber: index+3,
+            positionNumber: index+3,
             positionName  : "Right Half Forward",
         },
     }
@@ -152,32 +153,34 @@ const TeamContainer   = ({team, onDrop}) => {
         left              : {
             id            : team[ index ].id,
             name          : team[ index ].name,
-            poditionNumber: index+1,
+            positionNumber: index+1,
             positionName  : "Left Full Forward",
         },
         middle            : {
             id            : team[ index+1 ].id,
             name          : team[ index+1 ].name,
-            poditionNumber: index+2,
+            positionNumber: index+2,
             positionName  : "Full Forward",
         },
         right             : {
             id            : team[ index+2 ].id,
             name          : team[ index+2 ].name,
-            poditionNumber: index+3,
+            positionNumber: index+3,
             positionName  : "Right Full Forward",
         },
     }
 
-    const ThreeAccross   = ({boxY, left, middle, right}) => {
+    const ThreeAcross   = ({boxY, left, middle, right}) => {
         const Left = () => {
             const boxX = teamWidth * gapWidthPercent4
             return  (
                 <Box
                     x      = {boxX}     y      = {boxY}
                     width  = {boxWidth} height = {boxHeight}
-                    id     = {left.id}  name   = {left.name}
-                    onDrop = {(box , id) => console.log("Dropped box: ", box, " ID: ", id)}
+                    id     = {left.id}   player={left}
+                    onDrop={onDrop}
+                    style = {{margin: "0px", fontWeight: "bold"}}
+                    source="Team"
                 />
             )
         }
@@ -187,8 +190,10 @@ const TeamContainer   = ({team, onDrop}) => {
                 <Box
                     x={boxX} y={boxY}
                     width={boxWidth} height={boxHeight}
-                    id={middle.id}  name={middle.name}
-                    onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
+                    id={middle.id}                          player={middle}
+                    onDrop={onDrop}
+                    style = {{margin: "0px", fontWeight: "bold"}}
+                    source="Team"
                 />
             )
         }
@@ -198,8 +203,10 @@ const TeamContainer   = ({team, onDrop}) => {
                 <Box
                     x={boxX} y={boxY}
                     width={boxWidth} height={boxHeight}
-                    id={right.id}  name={right.name}
-                    onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
+                    id={right.id}                          player={right}
+                    onDrop={onDrop}
+                    style = {{margin: "0px", fontWeight: "bold"}}
+                    source="Team"
                 />
             )
         }
@@ -218,8 +225,10 @@ const TeamContainer   = ({team, onDrop}) => {
                 <Box
                     x      = {boxX}     y      = {boxY}
                     width  = {boxWidth} height = {boxHeight}
-                    id     = {left.id}  name   = {left.name}
-                    onDrop = {(box , id) => console.log("Dropped box: ", box, " ID: ", id)}
+                    id     = {left.id}                          player={left}
+                    onDrop={onDrop}
+                    style = {{margin: "0px", fontWeight: "bold"}}
+                    source="Team"
                 />
             )
         }
@@ -230,8 +239,10 @@ const TeamContainer   = ({team, onDrop}) => {
                 <Box
                     x={boxX} y={boxY}
                     width={boxWidth} height={boxHeight}
-                    id={right.id}  name={right.name}
-                    onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
+                    id={right.id}  player={right}
+                    onDrop={onDrop}
+                    style = {{margin: "0px", fontWeight: "bold"}}
+                    source="Team"
                 />
             )
         }
@@ -253,8 +264,10 @@ const TeamContainer   = ({team, onDrop}) => {
                 <Box
                     x={boxX} y={boxY}
                     width={boxWidth} height={boxHeight}
-                    id={middle.id}  name={middle.name}
-                    onDrop={(box, id) => console.log("Dropped box: ", box, " ID: ", id)}
+                    id={middle.id}  player={middle}
+                    onDrop={onDrop}
+                    style = {{margin: "0px", fontWeight: "bold"}}
+                    source="Team"
                 />
             )
         }
@@ -262,16 +275,14 @@ const TeamContainer   = ({team, onDrop}) => {
 
     }
 
-
-
     return (
             <Container className="team-container" >
-                <OneAcross    {...keeper       } />
-                <ThreeAccross {...fullBacks    }/>
-                <ThreeAccross {...halfBacks    }/>
-                <TwoAcross    {...midfielders  }/>
-                <ThreeAccross {...halfForwards }/>
-                <ThreeAccross {...fullForwards }/>
+                <OneAcross   {...keeper       }/>
+                <ThreeAcross {...fullBacks    }/>
+                <ThreeAcross {...halfBacks    }/>
+                <TwoAcross   {...midfielders  }/>
+                <ThreeAcross {...halfForwards }/>
+                <ThreeAcross {...fullForwards }/>
             </Container>
     )
 }
@@ -279,7 +290,7 @@ const SubsContainer   = ({subs, onDrop}) => {
         let nextRow = 0
         return (
 
-            <Container className="subs-container">
+            <Container className="subs-container" >
                 {subs.map((member) => {
                     const top = nextRow;
                     nextRow += 60; // Increment nextRow by 50 for the next iteration
@@ -287,12 +298,14 @@ const SubsContainer   = ({subs, onDrop}) => {
                         <Box
                             key={member.id}
                             id={member.id}
-                            name={member.name}
+                            player={member}
                             width={150}
                             height={50}
                             x={0}
                             y={top}
                             onDrop={onDrop}
+                            style={{marginLeft: "13px"}}
+                            source="Subs"
                         />
                     );
                 })}

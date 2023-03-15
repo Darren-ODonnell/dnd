@@ -29,10 +29,7 @@
     max-width: 18%;
     overflow: auto;
     background-color: mediumpurple;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin: auto;
+
 }
 .team-container      {
     position        : absolute;
@@ -40,7 +37,7 @@
     width           : 64%;
     height          : 90%;
     border          : 1px solid green;
-    background-image: url('../media/GAA Pitch.png');
+    background-image: url('../media/GAA Pitch2.png');
     background-size : 100% 100%;
     max-width       : 64%;
     max-height      : 90%;
@@ -55,14 +52,10 @@
     position        : absolute;
     right           : 0;
     background-color: mediumpurple;
-    max-height : 100%;
-    max-width: 18%;
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: space-between;
-    text-align: center;
+    max-height      : 100%;
+    max-width       : 18%;
+    overflow        : auto;
+
 
 }
 .action-container    {
