@@ -34,11 +34,11 @@ const myPanel = [
     { key: 16, id: 16, name: "Grace Walker"   , position: 0},
     { key: 17, id: 17, name: "Henry Kim"      , position: 0},
     { key: 18, id: 18, name: "Isabella Chen"  , position: 0},
-    { key: 19, id: 19, name: "Jacob Stewart"  , position: 0},
-    { key: 20, id: 20, name: "Katie Huang"    , position: 0},
-    { key: 21, id: 21, name: "Liam Ramirez"   , position: 0},
-    { key: 22, id: 22, name: "Mia Nguyen"     , position: 0},
-    { key: 23, id: 23, name: "Noah Phillips"  , position: 0},
+    // { key: 19, id: 19, name: "Jacob Stewart"  , position: 0},
+    // { key: 20, id: 20, name: "Katie Huang"    , position: 0},
+    // { key: 21, id: 21, name: "Liam Ramirez"   , position: 0},
+    // { key: 22, id: 22, name: "Mia Nguyen"     , position: 0},
+    // { key: 23, id: 23, name: "Noah Phillips"  , position: 0},
     // { key: 24, id: 24, name: "Olivia Smith"   , position: 0},
     // { key: 25, id: 25, name: "Paula Davis"    , position: 0},
     // { key: 26, id: 26, name: "Quinn Green"    , position: 0},
@@ -62,25 +62,26 @@ const mySubs = [
     { key: 37, id: 37, name: "Charlie Lee"   , position: 0},
     { key: 38, id: 38, name: "Dylan Johnson" , position: 0},
     { key: 39, id: 39, name: "Ella Hernandez", position: 0},
-    { key: 40, id: 40, name: "Finn Robinson" , position: 0},
-    { key: 41, id: 41, name: "Georgia Wright", position: 0},
-    { key: 42, id: 42, name: "Hannah Chen"   , position: 0},
-    { key: 43, id: 43, name: "Ian Wilson"    , position: 0},
+    // { key: 40, id: 40, name: "Finn Robinson" , position: 0},
+    // { key: 41, id: 41, name: "Georgia Wright", position: 0},
+    // { key: 42, id: 42, name: "Hannah Chen"   , position: 0},
+    // { key: 43, id: 43, name: "Ian Wilson"    , position: 0},
 ]
 
 const emptyPlayer =  { key: v4(), id: 0, name: "" , position: 0}
 
+
 function App() {
-    // const [panel, setPanel] = useState(() => myPanel );
-    // const [subs , setSubs]  = useState(() => mySubs  );
-    // const [team , setTeam]  = useState(() => myTeam  );
     const [panel, setPanel] = useState(myPanel );
     const [subs , setSubs]  = useState(mySubs  );
     const [team , setTeam]  = useState(myTeam  );
 
+
     console.log("Panel: " + JSON.stringify(panel))
     console.log("Team: "  + JSON.stringify(team))
     console.log("Subs: "  + JSON.stringify(subs))
+
+
 
     const listAdd = (destIndex, setList, player, dest) => {
         if(dest==="Team") {
@@ -123,12 +124,17 @@ function App() {
 
         }
     }
-    const resetPlayer = (destPlayer, player) => {
+    const resetTeamPlayer = (destPlayer, player) => {
         destPlayer.key = player.key
         destPlayer.position = player.position
         destPlayer.position = 0
         destPlayer.key = v4()
         destPlayer.positionName = ""
+        return destPlayer
+    }
+
+    const resetPlayer = (destPlayer, player) => {
+
         return destPlayer
     }
 
@@ -160,12 +166,12 @@ function App() {
             case "Team":
                 if ( source === "Panel")    {
                     // tidyup some attribs in player
-                    destPlayer = resetPlayer(destPlayer, player)
+                    destPlayer = resetTeamPlayer(destPlayer, player)
                     listAdd(panel.length  , setPanel, destPlayer, "Panel")
                     listRemove(sourceIndex, setPanel, player.id , id      , "Panel")
                 }
                 if ( source === "Subs")  {
-                    destPlayer = resetPlayer(destPlayer, player)
+                    destPlayer = resetTeamPlayer(destPlayer, player)
                     listAdd(subs.length   , setSubs, destPlayer, "Subs")
                     listRemove(sourceIndex, setSubs, player.id , id     , "Subs")
                 }
