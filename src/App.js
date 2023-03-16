@@ -1,12 +1,9 @@
-import './App.css';
-
-import FlexBox2 from "./flexbox/FlexBox2";
-import DraggableList from "./dragndrop/DraggableList";
-import VariableGrid from "./muigrid/VariableGrid";
 import React, { useEffect, useState } from "react";
+import FlexBox2 from "./flexbox/FlexBox2";
 import TeamsheetContainer from "./muigrid/VariableGrid";
 import {DndContext, DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
+import './App.css';
 
 
 const myTeam = [
@@ -65,15 +62,62 @@ const mySubs = [
 ]
 
 function App() {
-    const [team, setTeam] = useState(myTeam);
+    const [team , setTeam]  = useState(myTeam);
     const [panel, setPanel] = useState(myPanel);
-    const [subs, setSubs] = useState(mySubs);
+    const [subs , setSubs]  = useState(mySubs);
 
+    const teamAdd = (destIndex,player) => {
+        player.positionNumber = destIndex+1
+        const newArray =
+            [...team.splice(0, destIndex),
+                player,
+             ...team.splice(destIndex+1)
+            ]
+        setTeam(newArray)
+    }
+    const panelAdd = (destIndex, player) => {
+        const array= [ panel.splice(destIndex,0,player)]
+        setPanel(array)
+    }
+    const subsAdd= (destIndex) => {
+        const array= [ subs.splice(destIndex,0,player)]
+        setSubs(array)
+    }
+
+    const panelRemove= (sourceIndex) => {
+        const array = [...panel.splice(0,sourceIndex-1), ...panel.splice(sourceIndex+1)]
+        setPanel( array )
+    }
+    const subsRemove= (sourceIndex) => {
+        const array = [...subs.splice(0,sourceIndex-1), ...subs.splice(sourceIndex+1)]
+        setSubs( array )
+    }
+    const teamRemove= () => {
+        // reduce entry to an empty box - dont delete the entry - implying the array is still of size 15
+        const newArray =
+            [...team.splice(sourceIndex,id),
+                {},
+            ...team.splice(sourceIndex+1)
+            ]
+        setTeam(newArray)
+    }
+
+
+
+    const updatePanel = (destIndex, player) => {
+        setPanel([
+            ...panel,
+            panel.splice(destIndex,0,player)])
+    }
+
+    const updateSubs = (destIndex, player) => {
+        setSubs([...subs, subs.splice(destIndex,0,player)])
+    }
     useEffect(() => {
         setTeam(myTeam)
         setPanel(myPanel)
         setSubs(mySubs)
-    })
+    }, team, panel, subs)
 
     const onDrop = (box , id,  sc, player)  => {
         const destination =  whereIsId(id)
@@ -92,76 +136,40 @@ function App() {
         // being dropped onto
         switch(destination) {
             case "Panel":
-                if (source==="Team") {
-                    player.positionNumber = 0; // reset when moving
-                    const newArray = [...team.splice(0,sourceIndex),{},...team.splice(sourceIndex+1)]
-                    setTeam(newArray)
+                if (source==="Subs")     subsRemove(sourceIndex)
+                if (source==="Team")     teamRemove(sourceIndex)
 
-                }
-                if (source==="Subs") {
-                    setSubs(removeAtIndex(subs, sourceIndex))
-                }
-                setPanel([...panel, panel.splice(destIndex,0,player)])
+                panelAdd(destIndex, player)
                 break
             case "Team":
-                if (source==="Panel") {
-                    setPanel(removeAtIndex(panel, sourceIndex))
-                }
+                if (source==="Panel")    panelRemove(sourceIndex)
+                if ( source==="Subs")    subsRemove(sourceIndex)
 
-
-                if ( source==="Subs") {
-                    const index = findIndex(subs, id)
-                    setSubs(removeAtIndex(subs, sourceIndex))
-                }
-                const newTeam  = [...team.splice(sourceIndex,id),{},...team.splice(sourceIndex+1)]
-                setTeam(newTeam)
+                teamAdd(destIndex, player)
                 break
             case "Subs":
-                if (source==="Panel") {
-                     setPanel(removeAtIndex(panel, sourceIndex))
-                }
-                if (source=="Team") {
-                     const newArray = [...team.splice(sourceIndex,id),{},...team.splice(sourceIndex+1)]
-                    setTeam(newArray)
-                }
+                if (source==="Panel")    panelRemove(sourceIndex)
+                if (source=="Team")      teamRemove(sourceIndex)
 
-                setSubs([...subs, subs.splice(id,0,player)])
+                subsAdd(destIndex, player)
                 break
         }
     }
-
-
-
-
 
     const checkIfIdExists = (array, id) => {
         return array.some(item => item.id === id)
     }
 
     const whatTableIsId = (id) => {
-        if(checkIfIdExists(panel, id)) {
-            return panel
-        }
-        if(checkIfIdExists(team, id)) {
-            return team
-        }
-        if(checkIfIdExists(subs, id)) {
-            return subs
-        }
+        if(checkIfIdExists(panel, id))   return panel
+        if(checkIfIdExists(team, id))    return team
+        if(checkIfIdExists(subs, id))    return subs
     }
 
     const whereIsId = (id) => {
-
-        if(checkIfIdExists(panel, id)) {
-            return "Panel"
-        }
-        if(checkIfIdExists(team, id)) {
-            return "Team"
-        }
-        if(checkIfIdExists(subs, id)) {
-            return "Subs"
-        }
-
+        if(checkIfIdExists(panel, id))  return "Panel"
+        if(checkIfIdExists(team, id))   return "Team"
+        if(checkIfIdExists(subs, id))   return "Subs"
     }
 
     const removeById = (array, id) => {
@@ -181,17 +189,9 @@ function App() {
 
     return (
     <div className="App">
-        {/*<GridComponent />?*/}
-        {/*<GaelicFootballTeam />*/}
-        {/*<GAAForm team={names}/>*/}
-        {/*<DraggableList data={names} />*/}
-        {/*<FlexBox2/>*/}
-        {/*<VariableGrid/>*/}
         <DndProvider backend={HTML5Backend}>
-                <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop}/>
-
+            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop}/>
         </DndProvider>
-        {/*<Example data={names}/>*/}
     </div>
   );
 }
