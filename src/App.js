@@ -115,25 +115,21 @@ function App() {
         });
     }
 
-    const updatePanel = (destIndex, player) => {
-        setPanel(prevArray => {
-            const newArray = [...prevArray]; // make a copy of the previous array
-            newArray.splice(destIndex,0,player); // set the object at the index to an empty object
-            return newArray; // return the new array to update the state
-        });
-    }
-    const updateSubs = (destIndex, player) => {
-        setSubs(prevArray => {
-            const newArray = [...prevArray]; // make a copy of the previous array
-            newArray.splice(destIndex,0,player); // set the object at the index to an empty object
-            return newArray; // return the new array to update the state
-        });
-    }
-    // useEffect(() => {
-    //     setTeam(myTeam)
-    //     setPanel(myPanel)
-    //     setSubs(mySubs)
-    // }, team, panel, subs)
+    // const updatePanel = (destIndex, player) => {
+    //     setPanel(prevArray => {
+    //         const newArray = [...prevArray]; // make a copy of the previous array
+    //         newArray.splice(destIndex,0,player); // set the object at the index to an empty object
+    //         return newArray; // return the new array to update the state
+    //     });
+    // }
+    // const updateSubs = (destIndex, player) => {
+    //     setSubs(prevArray => {
+    //         const newArray = [...prevArray]; // make a copy of the previous array
+    //         newArray.splice(destIndex,0,player); // set the object at the index to an empty object
+    //         return newArray; // return the new array to update the state
+    //     });
+    // }
+
 
     const onDrop = (box , id,  sc, player)  => {
         const dest = whatTableIsId(id)
