@@ -32,23 +32,23 @@ const myPanel = [
     { key: 21, id: 21, name: "Liam Ramirez"   , position: 0},
     { key: 22, id: 22, name: "Mia Nguyen"     , position: 0},
     { key: 23, id: 23, name: "Noah Phillips"  , position: 0},
-    { key: 24, id: 24, name: "Olivia Smith"   , position: 0},
-    { key: 25, id: 25, name: "Paula Davis"    , position: 0},
-    { key: 26, id: 26, name: "Quinn Green"    , position: 0},
-    { key: 27, id: 27, name: "Ryan Hernandez" , position: 0},
-    { key: 28, id: 28, name: "Sophia Lee"     , position: 0},
-    { key: 29, id: 29, name: "Tyler Rodriguez", position: 0},
-    { key: 30, id: 30, name: "Violet Patel"   , position: 0},
-    { key: 31, id: 31, name: "William Brown"  , position: 0},
-    { key: 32, id: 32, name: "Xavier Kim"     , position: 0},
-    { key: 33, id: 33, name: "Yara Gomez"     , position: 0},
-    { key: 34, id: 34, name: "Zoe Martinez"   , position: 0},
-    { key: 35, id: 35, name: "Alex Turner"    , position: 0},
-    { key: 36, id: 36, name: "Bella Davis"    , position: 0},
-    { key: 44, id: 44, name: "Jasmine Nguyen" , position: 0},
-    { key: 45, id: 45, name: "Kian Ramirez"   , position: 0},
-    { key: 46, id: 46, name: "Luna Smith"     , position: 0},
-    { key: 47, id: 47, name: "Max Green"      , position: 0},
+    // { key: 24, id: 24, name: "Olivia Smith"   , position: 0},
+    // { key: 25, id: 25, name: "Paula Davis"    , position: 0},
+    // { key: 26, id: 26, name: "Quinn Green"    , position: 0},
+    // { key: 27, id: 27, name: "Ryan Hernandez" , position: 0},
+    // { key: 28, id: 28, name: "Sophia Lee"     , position: 0},
+    // { key: 29, id: 29, name: "Tyler Rodriguez", position: 0},
+    // { key: 30, id: 30, name: "Violet Patel"   , position: 0},
+    // { key: 31, id: 31, name: "William Brown"  , position: 0},
+    // { key: 32, id: 32, name: "Xavier Kim"     , position: 0},
+    // { key: 33, id: 33, name: "Yara Gomez"     , position: 0},
+    // { key: 34, id: 34, name: "Zoe Martinez"   , position: 0},
+    // { key: 35, id: 35, name: "Alex Turner"    , position: 0},
+    // { key: 36, id: 36, name: "Bella Davis"    , position: 0},
+    // { key: 44, id: 44, name: "Jasmine Nguyen" , position: 0},
+    // { key: 45, id: 45, name: "Kian Ramirez"   , position: 0},
+    // { key: 46, id: 46, name: "Luna Smith"     , position: 0},
+    // { key: 47, id: 47, name: "Max Green"      , position: 0},
 
 ]
 const mySubs = [
@@ -68,67 +68,86 @@ function App() {
 
     const teamAdd = (destIndex,player) => {
         player.positionNumber = destIndex+1
-        const newArray =
-            [...team.splice(0, destIndex),
-                player,
-             ...team.splice(destIndex+1)
-            ]
-        setTeam(newArray)
+        setTeam(prevState => {
+            const newArray = [ ...prevState ]
+            newArray[ destIndex ] = player
+            return newArray
+        })
+
     }
     const panelAdd = (destIndex, player) => {
-        const array= [ panel.splice(destIndex,0,player)]
-        setPanel(array)
+        setPanel(prevState =>{
+            const newArray = [...prevState]
+            newArray.splice(destIndex,0, player)
+            return newArray
+        })
     }
-    const subsAdd= (destIndex) => {
-        const array= [ subs.splice(destIndex,0,player)]
-        setSubs(array)
+    const subsAdd= (destIndex, player) => {
+        setSubs(prevState =>{
+            const newArray = [...prevState]
+            newArray.splice(destIndex,0, player)
+            return newArray
+        })
+
     }
 
-    const panelRemove= (sourceIndex) => {
-        const array = [...panel.splice(0,sourceIndex-1), ...panel.splice(sourceIndex+1)]
-        setPanel( array )
+    const panelRemove= (sourceIndex, sourceId, destId) => {
+        setPanel(prevState =>{
+            const newArray = [...prevState]
+            newArray.splice(sourceIndex,1)
+            return newArray
+        })
     }
     const subsRemove= (sourceIndex) => {
-        const array = [...subs.splice(0,sourceIndex-1), ...subs.splice(sourceIndex+1)]
-        setSubs( array )
+        setSubs(prevState =>{
+            const newArray = [...prevState]
+            newArray.splice(sourceIndex,1)
+            return newArray
+        })
     }
-    const teamRemove= () => {
+    const teamRemove= (sourceIndex, id) => {
         // reduce entry to an empty box - dont delete the entry - implying the array is still of size 15
-        const newArray =
-            [...team.splice(sourceIndex,id),
-                {},
-            ...team.splice(sourceIndex+1)
-            ]
-        setTeam(newArray)
+
+        setTeam(prevArray => {
+            const newArray = [...prevArray]; // make a copy of the previous array
+            newArray[sourceIndex] = {}; // set the object at the index to an empty object
+            return newArray; // return the new array to update the state
+        });
     }
-
-
 
     const updatePanel = (destIndex, player) => {
-        setPanel([
-            ...panel,
-            panel.splice(destIndex,0,player)])
+        setPanel(prevArray => {
+            const newArray = [...prevArray]; // make a copy of the previous array
+            newArray.splice(destIndex,0,player); // set the object at the index to an empty object
+            return newArray; // return the new array to update the state
+        });
     }
-
     const updateSubs = (destIndex, player) => {
-        setSubs([...subs, subs.splice(destIndex,0,player)])
+        setSubs(prevArray => {
+            const newArray = [...prevArray]; // make a copy of the previous array
+            newArray.splice(destIndex,0,player); // set the object at the index to an empty object
+            return newArray; // return the new array to update the state
+        });
     }
-    useEffect(() => {
-        setTeam(myTeam)
-        setPanel(myPanel)
-        setSubs(mySubs)
-    }, team, panel, subs)
+    // useEffect(() => {
+    //     setTeam(myTeam)
+    //     setPanel(myPanel)
+    //     setSubs(mySubs)
+    // }, team, panel, subs)
 
     const onDrop = (box , id,  sc, player)  => {
+        const dest = whatTableIsId(id)
+        const sourc = whatTableIsId(player.id)
+        const sourcePlayer = player
+        const destPlayer = dest.find(p => p.id === id)
         const destination =  whereIsId(id)
 
         const source = whereIsId(player.id)
 
-        const dest = whatTableIsId(id)
-        const sourc = whatTableIsId(player.id)
 
-        console.log("Source: "+source+" id: "+player.id)
-        console.log("Destination: "+destination+" id: "+id)
+
+        console.log("Source: "+source+" id: "+JSON.stringify(player))
+        console.log("Destination: "+destination+" player: "+JSON.stringify(dest.find(p => p.id === id)))
 
         const sourceIndex = findIndex(sourc, player.id)
         const destIndex = findIndex(dest, id)
@@ -136,20 +155,27 @@ function App() {
         // being dropped onto
         switch(destination) {
             case "Panel":
-                if (source==="Subs")     subsRemove(sourceIndex)
-                if (source==="Team")     teamRemove(sourceIndex)
+                if (source === "Subs")     subsRemove(sourceIndex, player.id)
+                if (source === "Team")     teamRemove(sourceIndex, player.id)
 
                 panelAdd(destIndex, player)
                 break
             case "Team":
-                if (source==="Panel")    panelRemove(sourceIndex)
-                if ( source==="Subs")    subsRemove(sourceIndex)
+                if ( source === "Panel")    {
+                    const p = dest.find(p => p.id === id)
+
+                    panel.push(p)
+                    panelRemove(sourceIndex, player.id, id)
+
+
+                }
+                if ( source === "Subs")    subsRemove(sourceIndex, player.id)
 
                 teamAdd(destIndex, player)
                 break
             case "Subs":
-                if (source==="Panel")    panelRemove(sourceIndex)
-                if (source=="Team")      teamRemove(sourceIndex)
+                if (source === "Panel")    panelRemove(sourceIndex.player.id)
+                if (source === "Team")      teamRemove(sourceIndex.player.id)
 
                 subsAdd(destIndex, player)
                 break
