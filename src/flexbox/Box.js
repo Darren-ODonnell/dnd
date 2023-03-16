@@ -44,7 +44,7 @@ const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
 
             // console.log("player id: "+id+ " Player name: "+name)
 
-            onDrop(newBox, id, source, item.player);
+            onDrop(newBox, id, source, item.player, player);
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),

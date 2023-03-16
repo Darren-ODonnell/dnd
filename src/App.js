@@ -4,24 +4,31 @@ import TeamsheetContainer from "./muigrid/VariableGrid";
 import {DndContext, DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import './App.css';
-
+import { v4 } from 'uuid';
 
 const myTeam = [
-    { key:  1, id: 1 , name: "John Doe"        , position: 1},
-    { key:  2, id: 2 , name: "Jane Doe"        , position: 2},
-    { key:  3, id: 3 , name: "Bob Smith"       , position: 3},
-    { key:  4, id: 4 , name: "Sara Johnson"    , position: 4},
-    { key:  5, id: 5 , name: "Tom Jackson"     , position: 5},
-    { key:  6, id: 6 , name: "Emily Davis"     , position: 6},
-    { key:  7, id: 7 , name: "Chris Lee"       , position: 7},
-    { key:  8, id: 8 , name: "Linda Brown"     , position: 8},
-    { key:  9, id: 9 , name: "Adam Garcia"     , position: 9},
-    { key:  10, id: 10, name: "Amy Patel"       , position: 10},
-    { key:  11, id: 11, name: "Benjamin Wright" , position: 11},
-    { key:  12, id: 12, name: "Catherine Martin", position: 12},
-    { key:  13, id: 13, name: "David Wilson"    , position: 13},
-    { key:  14, i1d: 14, name: "Elizabeth Turner", position: 14},
-    { key:  15, id: 15, name: "Frank Robinson"  , position: 15},
+    { key: 1 , id: 1 , name: "John Doe"      , position: 1},
+    { key: 2 , id: 2 , name: "Jane Doe"      , position: 2},
+    { key: 3 , id: 3 , name: "Bob Smith"     , position: 3},
+    { key: 4 , id: 4 , name: "Sara Johnson"  , position: 4},
+    { key: 5 , id: 5 , name: "Tom Jackson"   , position: 5},
+    { key: 6 , id: 6 , name: "Emily Davis"   , position: 6},
+    { key: 7 , id: 7 , name: "Chris Lee"     , position: 7},
+    { key: 8 , id: 8 , name: "Linda Brown"   , position: 8},
+    { key: 9 , id: 9 , name: "Adam Garcia"   , position: 9},
+    { key: 10, id: 0 , name: ""              , position: 0},
+    { key: 11, id: 0 , name: ""              , position: 0},
+    { key: 12, id: 0 , name: ""              , position: 0},
+    { key: 13, id: 0 , name: ""              , position: 0},
+    { key: 14, id: 0 , name: ""              , position: 0},
+    { key: 15, id: 15, name: "Frank Robinson", position: 15},
+
+    // { key:  10, id: 10, name: "Amy Patel"       , position: 10},
+    // { key:  11, id: 11, name: "Benjamin Wright" , position: 11},
+    // { key:  12, id: 12, name: "Catherine Martin", position: 12},
+    // { key:  13, id: 13, name: "David Wilson"    , position: 13},
+    // { key:  14, id: 14, name: "Elizabeth Turner", position: 14},
+    // { key:  15, id: 15, name: "Frank Robinson"  , position: 15},
 ];
 const myPanel = [
     { key: 16, id: 16, name: "Grace Walker"   , position: 0},
@@ -61,86 +68,77 @@ const mySubs = [
     { key: 43, id: 43, name: "Ian Wilson"    , position: 0},
 ]
 
+const emptyPlayer =  { key: v4(), id: 0, name: "" , position: 0}
+
 function App() {
-    const [team , setTeam]  = useState(myTeam);
-    const [panel, setPanel] = useState(myPanel);
-    const [subs , setSubs]  = useState(mySubs);
+    // const [panel, setPanel] = useState(() => myPanel );
+    // const [subs , setSubs]  = useState(() => mySubs  );
+    // const [team , setTeam]  = useState(() => myTeam  );
+    const [panel, setPanel] = useState(myPanel );
+    const [subs , setSubs]  = useState(mySubs  );
+    const [team , setTeam]  = useState(myTeam  );
 
-    const teamAdd = (destIndex,player) => {
-        player.positionNumber = destIndex+1
-        setTeam(prevState => {
-            const newArray = [ ...prevState ]
-            newArray[ destIndex ] = player
-            return newArray
-        })
+    console.log("Panel: " + JSON.stringify(panel))
+    console.log("Team: "  + JSON.stringify(team))
+    console.log("Subs: "  + JSON.stringify(subs))
 
+    const listAdd = (destIndex, setList, player, dest) => {
+        if(dest==="Team") {
+            player.positionNumber = destIndex+1
+            player.key = destIndex+1
+            setList(prevState => {
+                const newArray = [ ...prevState ]
+                newArray[ destIndex ] = player
+                return newArray
+            })
+        } else {
+            if(player.id!==undefined) {
+                player.position = 0
+                setList( prevState => {
+                    const newArray = [ ...prevState ]
+                    newArray.splice( destIndex, 0, player )
+                    return newArray
+                } )
+            }
+        }
     }
-    const panelAdd = (destIndex, player) => {
-        setPanel(prevState =>{
-            const newArray = [...prevState]
-            newArray.splice(destIndex,0, player)
-            return newArray
-        })
-    }
-    const subsAdd= (destIndex, player) => {
-        setSubs(prevState =>{
-            const newArray = [...prevState]
-            newArray.splice(destIndex,0, player)
-            return newArray
-        })
+    const listRemove = (sourceIndex, setList, sourceId, destId, source) => {
+        if(source==="Team") {
+            setList(prevArray => {
+                const newArray = [...prevArray]; // make a copy of the previous array
+                const p = newArray[sourceIndex]
+                p.id = 0
+                p.name = ""
+                p.position = 0
+                p.positionName = ""
+                newArray[sourceIndex] = p; // set the object at the index to an empty object
+                return newArray; // return the new array to update the state
+            });
+        }else {
+            setList( prevState => {
+                const newArray = [ ...prevState ]
+                newArray.splice( sourceIndex, 1 )
+                return newArray
+            } )
 
+        }
     }
-
-    const panelRemove= (sourceIndex, sourceId, destId) => {
-        setPanel(prevState =>{
-            const newArray = [...prevState]
-            newArray.splice(sourceIndex,1)
-            return newArray
-        })
-    }
-    const subsRemove= (sourceIndex) => {
-        setSubs(prevState =>{
-            const newArray = [...prevState]
-            newArray.splice(sourceIndex,1)
-            return newArray
-        })
-    }
-    const teamRemove= (sourceIndex, id) => {
-        // reduce entry to an empty box - dont delete the entry - implying the array is still of size 15
-
-        setTeam(prevArray => {
-            const newArray = [...prevArray]; // make a copy of the previous array
-            newArray[sourceIndex] = {}; // set the object at the index to an empty object
-            return newArray; // return the new array to update the state
-        });
+    const resetPlayer = (destPlayer, player) => {
+        destPlayer.key = player.key
+        destPlayer.position = player.position
+        destPlayer.position = 0
+        destPlayer.key = v4()
+        destPlayer.positionName = ""
+        return destPlayer
     }
 
-    // const updatePanel = (destIndex, player) => {
-    //     setPanel(prevArray => {
-    //         const newArray = [...prevArray]; // make a copy of the previous array
-    //         newArray.splice(destIndex,0,player); // set the object at the index to an empty object
-    //         return newArray; // return the new array to update the state
-    //     });
-    // }
-    // const updateSubs = (destIndex, player) => {
-    //     setSubs(prevArray => {
-    //         const newArray = [...prevArray]; // make a copy of the previous array
-    //         newArray.splice(destIndex,0,player); // set the object at the index to an empty object
-    //         return newArray; // return the new array to update the state
-    //     });
-    // }
-
-
-    const onDrop = (box , id,  sc, player)  => {
-        const dest = whatTableIsId(id)
-        const sourc = whatTableIsId(player.id)
+    const onDrop = (box , id,  sc, player, destPlayer)  => {
+        const dest = whatTableIsId(team, panel, subs, id)
+        const sourc = whatTableIsId(team, panel, subs, player.id)
         const sourcePlayer = player
-        const destPlayer = dest.find(p => p.id === id)
-        const destination =  whereIsId(id)
-
-        const source = whereIsId(player.id)
-
-
+        // const destPlayer = dest.find(p => p.id === id)
+        const destination =  whereIsId(team, panel, subs,id)
+        const source = whereIsId(team, panel, subs,player.id)
 
         console.log("Source: "+source+" id: "+JSON.stringify(player))
         console.log("Destination: "+destination+" player: "+JSON.stringify(dest.find(p => p.id === id)))
@@ -148,65 +146,62 @@ function App() {
         const sourceIndex = findIndex(sourc, player.id)
         const destIndex = findIndex(dest, id)
 
+
+        console.log("Source: " + source +", Destination: " + destination)
+
         // being dropped onto
         switch(destination) {
             case "Panel":
-                if (source === "Subs")     subsRemove(sourceIndex, player.id)
-                if (source === "Team")     teamRemove(sourceIndex, player.id)
+                if (source === "Subs")     listRemove(sourceIndex, setSubs, player.id, id, "Subs")
+                if (source === "Team")     listRemove(sourceIndex, setTeam, player.id, id, "Team")
 
-                panelAdd(destIndex, player)
+                listAdd(destIndex, setPanel, player, "Panel")
                 break
             case "Team":
                 if ( source === "Panel")    {
-                    const p = dest.find(p => p.id === id)
-
-                    panel.push(p)
-                    panelRemove(sourceIndex, player.id, id)
-
-
+                    // tidyup some attribs in player
+                    destPlayer = resetPlayer(destPlayer, player)
+                    listAdd(panel.length  , setPanel, destPlayer, "Panel")
+                    listRemove(sourceIndex, setPanel, player.id , id      , "Panel")
                 }
-                if ( source === "Subs")    subsRemove(sourceIndex, player.id)
+                if ( source === "Subs")  {
+                    destPlayer = resetPlayer(destPlayer, player)
+                    listAdd(subs.length   , setSubs, destPlayer, "Subs")
+                    listRemove(sourceIndex, setSubs, player.id , id     , "Subs")
+                }
 
-                teamAdd(destIndex, player)
+                listAdd(destIndex, setTeam, player, "Team")
                 break
             case "Subs":
-                if (source === "Panel")    panelRemove(sourceIndex.player.id)
-                if (source === "Team")      teamRemove(sourceIndex.player.id)
+                if (source === "Panel")    {
+                    listRemove(sourceIndex, setPanel, player.id, id,"Panel")
+                }
+                if (source === "Team")     {
+                    listRemove(sourceIndex, setTeam,  player.id, id,"Team")
+                }
 
-                subsAdd(destIndex, player)
+                listAdd(destIndex, setSubs, player, "Subs")
+
                 break
         }
+
     }
 
     const checkIfIdExists = (array, id) => {
         return array.some(item => item.id === id)
     }
-
-    const whatTableIsId = (id) => {
-        if(checkIfIdExists(panel, id))   return panel
+    const whatTableIsId = (team, panel, subs, id) => {
         if(checkIfIdExists(team, id))    return team
         if(checkIfIdExists(subs, id))    return subs
+        if(checkIfIdExists(panel, id))   return panel
     }
-
-    const whereIsId = (id) => {
-        if(checkIfIdExists(panel, id))  return "Panel"
+    const whereIsId = (team, panel, subs,id) => {
         if(checkIfIdExists(team, id))   return "Team"
         if(checkIfIdExists(subs, id))   return "Subs"
+        if(checkIfIdExists(panel, id))  return "Panel"
     }
-
-    const removeById = (array, id) => {
-        return array.filter(item => item.id !== id);
-    };
-
-
-// remove item from list but still leave an empty item in its place
-    const removeAtIndex = (team, index) =>{
-        team[index] = {}
-        return team;
-    }
-
     const findIndex = (array, id) => {
-        return array.findIndex(sub => sub.id === id);
+        return array.findIndex(sub => sub.id === id)
     }
 
     return (
