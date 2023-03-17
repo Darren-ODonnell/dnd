@@ -76,16 +76,13 @@ function App() {
     const [subs , setSubs]  = useState(mySubs  );
     const [team , setTeam]  = useState(myTeam  );
 
-
-    console.log("Panel: " + JSON.stringify(panel))
-    console.log("Team: "  + JSON.stringify(team))
-    console.log("Subs: "  + JSON.stringify(subs))
-
-
+    // console.log("Panel: " + JSON.stringify(panel))
+    // console.log("Team: "  + JSON.stringify(team))
+    // console.log("Subs: "  + JSON.stringify(subs))
 
     const listAdd = (destIndex, setList, player, dest) => {
         if(dest==="Team") {
-            player.positionNumber = destIndex+1
+            player.position = destIndex+1
             player.key = destIndex+1
             setList(prevState => {
                 const newArray = [ ...prevState ]
@@ -99,7 +96,7 @@ function App() {
                     const newArray = [ ...prevState ]
                     newArray.splice( destIndex, 0, player )
                     return newArray
-                } )
+                })
             }
         }
     }
@@ -138,56 +135,85 @@ function App() {
         return destPlayer
     }
 
+    const switchPlayers = (destPlayer, player) => {
+        setTeam(prevState => {
+            const array = [...prevState]
+            array[destPlayer.key-1] = player
+            array[player.key-1] = destPlayer
+            return array
+        })
+    };
+    const insertPlayer = (player, destIndex, sourceIndex, setList) => {
+        setList(prevState => {
+            const array = [...prevState]
+            array.splice(sourceIndex, 1) // remove the item at sourceIndex
+            array.splice(destIndex, 0, player) // insert at destIndex
+            const filteredList = array.filter(item => item.name !== ""); // remove any empty cells
+            const uniqueList = [...new Set(filteredList)]; // remove any duplicates
+            console.log("List: "+ JSON.stringify(uniqueList))
+            return uniqueList
+
+        })
+    };
+
     const onDrop = (box , id,  sc, player, destPlayer)  => {
         const dest = whatTableIsId(team, panel, subs, id)
         const sourc = whatTableIsId(team, panel, subs, player.id)
-        const sourcePlayer = player
-        // const destPlayer = dest.find(p => p.id === id)
         const destination =  whereIsId(team, panel, subs,id)
         const source = whereIsId(team, panel, subs,player.id)
+        console.log("Source: "+source+" id: "+JSON.stringify(player))
+        console.log("Destination: "+destination+" player: "+JSON.stringify(dest.find(p => p.id === id)))
+        const sourceIndex = findIndex(sourc, player.id)
+        const destIndex = findIndex(dest, id)
+        const destKeyIndex = destPlayer.key
 
         console.log("Source: "+source+" id: "+JSON.stringify(player))
         console.log("Destination: "+destination+" player: "+JSON.stringify(dest.find(p => p.id === id)))
-
-        const sourceIndex = findIndex(sourc, player.id)
-        const destIndex = findIndex(dest, id)
-
-
-        console.log("Source: " + source +", Destination: " + destination)
-
         // being dropped onto
         switch(destination) {
             case "Panel":
-                if (source === "Subs")     listRemove(sourceIndex, setSubs, player.id, id, "Subs")
-                if (source === "Team")     listRemove(sourceIndex, setTeam, player.id, id, "Team")
-
-                listAdd(destIndex, setPanel, player, "Panel")
+                if (source === "Subs")    {
+                    listRemove(sourceIndex, setSubs, player.id, id, "Subs")
+                    listAdd(destIndex, setPanel, player, "Panel")
+                }
+                if (source === "Team") {
+                    listRemove(sourceIndex, setTeam, player.id, id, "Team")
+                    listAdd(destIndex, setPanel, player, "Panel")
+                }
+                if(source==="Panel") {
+                    // move up/down within the list
+                    insertPlayer( player, destIndex, sourceIndex, setPanel)
+                }
                 break
             case "Team":
                 if ( source === "Panel")    {
                     // tidyup some attribs in player
                     destPlayer = resetTeamPlayer(destPlayer, player)
-                    listAdd(panel.length  , setPanel, destPlayer, "Panel")
-                    listRemove(sourceIndex, setPanel, player.id , id      , "Panel")
+                    listRemove(sourceIndex, setPanel, player.id , id      , "Panel") // remove from Panel
+                    listAdd(destKeyIndex-1, setTeam, player, "Team") // add to team
                 }
                 if ( source === "Subs")  {
                     destPlayer = resetTeamPlayer(destPlayer, player)
-                    listAdd(subs.length   , setSubs, destPlayer, "Subs")
                     listRemove(sourceIndex, setSubs, player.id , id     , "Subs")
+                    listAdd(destKeyIndex-1, setTeam, player, "Team")
                 }
-
-                listAdd(destIndex, setTeam, player, "Team")
+                if(source=== "Team") {
+                    switchPlayers(destPlayer, player)
+                }
                 break
             case "Subs":
                 if (source === "Panel")    {
                     listRemove(sourceIndex, setPanel, player.id, id,"Panel")
+                    listAdd(destIndex, setSubs, player, "Subs")
                 }
                 if (source === "Team")     {
                     listRemove(sourceIndex, setTeam,  player.id, id,"Team")
+                    listAdd(destIndex, setSubs, player, "Subs")
                 }
-
-                listAdd(destIndex, setSubs, player, "Subs")
-
+                if(source === "Subs") {
+                    // move up/down within the list
+                    insertPlayer( player, destIndex, sourceIndex, setSubs)
+                }
                 break
         }
 
@@ -209,11 +235,14 @@ function App() {
     const findIndex = (array, id) => {
         return array.findIndex(sub => sub.id === id)
     }
+    const findKeyIndex = (array, key) => {
+        return array.findIndex(sub => sub.key === key)
+    }
 
     return (
     <div className="App">
         <DndProvider backend={HTML5Backend}>
-            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop}/>
+            <TeamsheetContainer panel={[...panel]} team={[...team]} subs={[...subs]} onDrop={onDrop}/>
         </DndProvider>
     </div>
   );

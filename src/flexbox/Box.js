@@ -18,6 +18,7 @@ const BoxWrapper = styled.div`
   background-color: ${(props) => (props.isOver ? "lightblue" : "lightgray")};
   margin: 0 auto;
   justify-content: center;
+  align-items: center;
   opacity: ${(props) => (props.isDragging ? 0.5 : 1)};
 `;
 
@@ -71,6 +72,7 @@ const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
         // textAlign: 'center',
         cursor: "move",
         justifyContent: "center",
+
         opacity: isDragging ? 0.5 : 1,
         marginLeft: '5px',
         ...style,
