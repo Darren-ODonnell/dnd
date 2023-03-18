@@ -4,6 +4,8 @@ import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; // import Bootstrap CSS
 import './VariableGrid.css'
 import './teamsheet.css'
+import {useDrop} from "react-dnd";
+import {checkGW} from "../TeamsheetDnd";
 const boxWidth         = 150
 const boxHeight        = 55
 const teamWidth        = 640
@@ -15,6 +17,14 @@ const gapWidthPercent3 = gapWidth3 / teamWidth
 
 
 const TeamsheetContainer = ({panel,team, subs, onDrop}) => {
+    const handleDrop = (box, containerId) => {
+        // handle the drop event
+        console.log("Box dropped into container", containerId);
+        onDrop()
+    };
+
+    checkGW(panel, team, subs, 16, "TeamsheetContainer")
+
     return (
         <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>
             <PanelContainer  panel  = {panel} onDrop = {onDrop}/>
@@ -28,10 +38,10 @@ export default TeamsheetContainer;
 
 const PanelContainer = ({ panel, onDrop }) => {
     let nextRow = 0
-    return (
 
-        <Container className="panel-container">
-            {panel.map((member) => {
+    return (
+        <Container className="panel-container" >
+            { panel.map(( member ) => {
                 const top = nextRow;
                 nextRow += 60; // Increment nextRow by 50 for the next iteration
                 return (
@@ -52,10 +62,13 @@ const PanelContainer = ({ panel, onDrop }) => {
         </Container>
     );
 };
+
+
 const TeamContainer   = ({team, onDrop}) => {
 
     let index = 0
     const keeper = {
+        boxY: 0,
         middle: {
             key: 1,
             name: team[index].name,
@@ -64,7 +77,6 @@ const TeamContainer   = ({team, onDrop}) => {
             id: team[ index ].id,
         }
     }
-
     index+=1
     const fullBacks = {
         boxY : boxHeight*2,
@@ -273,8 +285,6 @@ const TeamContainer   = ({team, onDrop}) => {
 
         const Middle = () => {
             const boxX = "50%";
-            const boxY = 0;
-
             return  (
                 <Box
                     x={boxX} y={boxY}
@@ -301,11 +311,13 @@ const TeamContainer   = ({team, onDrop}) => {
             </Container>
     )
 }
-const SubsContainer   = ({subs, onDrop}) => {
+    const SubsContainer   = ({subs, onDrop}) => {
+
+
         let nextRow = 0
         return (
 
-            <Container className="subs-container" >
+            <Container className="subs-container">
                 {subs.map((member) => {
                     const top = nextRow;
                     nextRow += 60; // Increment nextRow by 50 for the next iteration

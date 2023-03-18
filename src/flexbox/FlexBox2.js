@@ -36,48 +36,48 @@ const panelList = [
 
 
 const Layout = ({data}) => {
-    const [team, setTeam] = useState([])
-    const [subs, setSubs] = useState([])
-    const [panel, setPanel] = useState([])
-    const [players, setPlayers] = useState([])
-    const [teamsheet, setTeamsheet] = useState([])
-    const [fixtureDate, setFixtureDate] = useState(new Date())
-    // const [data, error, loading, axiosApi] = useAxios()
-
-    const handleTeamChange = (e) => {
-    }
-    const handleSubsChange = (e) => {
-    }
-    const handlePanelChange = (e) => {
-
-    }
-    const getPlayers = () => {
-
-    }
-    const getTeamsheet = () => {
-
-    }
-    const getFixtureDate = () => {
-
-    }
-    const getTeam = () => {
-
-    }
-    const getSubs = () => {
-
-    }
-    const getPanel = () => {
-
-    }
-
-    useEffect(() => {
-        setPlayers(getPlayers() )
-        setTeamsheet( getTeamsheet() )
-        setFixtureDate( getFixtureDate() )
-        setTeam( getTeam(teamsheet) )
-        setSubs( getSubs(teamsheet) )
-        setPanel( getPanel(teamsheet) )
-    },[teamsheet])
+    // const [team, setTeam] = useState([])
+    // const [subs, setSubs] = useState([])
+    // const [panel, setPanel] = useState([])
+    // const [players, setPlayers] = useState([])
+    // const [teamsheet, setTeamsheet] = useState([])
+    // const [fixtureDate, setFixtureDate] = useState(new Date())
+    // // const [data, error, loading, axiosApi] = useAxios()
+    //
+    // const handleTeamChange = (e) => {
+    // }
+    // const handleSubsChange = (e) => {
+    // }
+    // const handlePanelChange = (e) => {
+    //
+    // }
+    // const getPlayers = () => {
+    //
+    // }
+    // const getTeamsheet = () => {
+    //
+    // }
+    // const getFixtureDate = () => {
+    //
+    // }
+    // const getTeam = () => {
+    //
+    // }
+    // const getSubs = () => {
+    //
+    // }
+    // const getPanel = () => {
+    //
+    // }
+    //
+    // useEffect(() => {
+    //     setPlayers(getPlayers() )
+    //     setTeamsheet( getTeamsheet() )
+    //     setFixtureDate( getFixtureDate() )
+    //     setTeam( getTeam(teamsheet) )
+    //     setSubs( getSubs(teamsheet) )
+    //     setPanel( getPanel(teamsheet) )
+    // },[teamsheet])
 
 
 
