@@ -4,7 +4,7 @@ import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; // import Bootstrap CSS
 import './VariableGrid.css'
 import './teamsheet.css'
-import {useDrop} from "react-dnd";
+// import {useDrop} from "react-dnd";
 import {checkGW} from "../TeamsheetDnd";
 const boxWidth         = 150
 const boxHeight        = 55
@@ -23,7 +23,7 @@ const TeamsheetContainer = ({panel,team, subs, onDrop}) => {
         onDrop()
     };
 
-    checkGW(panel, team, subs, 16, "TeamsheetContainer")
+    // checkGW(panel, team, subs, 16, "TeamsheetContainer")
 
     return (
         <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>

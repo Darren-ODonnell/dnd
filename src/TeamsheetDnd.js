@@ -5,11 +5,11 @@ import {HTML5Backend} from "react-dnd-html5-backend";
 import './App.css';
 import { v4 } from 'uuid';
 
-export const checkGW = (panel, team, subs, id, str) => {
-    console.log("Grace Walker in Panel ? " + str + " - " + JSON.stringify(panel.find( obj => obj.id === id )))
-    console.log("Grace Walker in Team  ? " + str + " - " + JSON.stringify(team.find(  obj => obj.id === id )))
-    console.log("Grace Walker in Subs  ? " + str + " - " + JSON.stringify(subs.find(  obj => obj.id === id )))
-}
+// export const checkGW = (panel, team, subs, id, str) => {
+//     console.log("Grace Walker in Panel ? " + str + " - " + JSON.stringify(panel.find( obj => obj.id === id )))
+//     console.log("Grace Walker in Team  ? " + str + " - " + JSON.stringify(team.find(  obj => obj.id === id )))
+//     console.log("Grace Walker in Subs  ? " + str + " - " + JSON.stringify(subs.find(  obj => obj.id === id )))
+// }
 
 const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     const [panel, setPanel] = useState( myPanel );
@@ -26,8 +26,7 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         console.log("State Changed - Subs")
     },[subs])
 
-
-    checkGW(panel, team, subs, 16, "TeamsheetDnD")
+    // checkGW(panel, team, subs, 16, "TeamsheetDnD")
 
     const listAdd = (destIndex, setList, player, dest) => {
         if(dest === "Team") {
@@ -69,6 +68,9 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         })
     }
 
+    const removeDuplicates = (array) => {
+        return [...new Set(array.map(obj => JSON.stringify(obj)))].map(str => JSON.parse(str));
+    }
 
     const listRemove = (sourceIndex, setList, sourceId, destId, source) => {
         setTeam(prevState => {
@@ -105,12 +107,10 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         destPlayer.positionName = ""
         return destPlayer
     }
-
     const resetPlayer = (destPlayer, player) => {
 
         return destPlayer
     }
-
     const switchPlayers = (destPlayer, player) => {
         setTeam(prevState => {
             const array = [...prevState]
@@ -119,7 +119,7 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             return array
         })
     };
-    const insertPlayer = (player, destIndex, sourceIndex, setList) => {
+    const insertPlayer2 = (player, destIndex, sourceIndex, setList) => {
         setList(prevState => {
             const array = [...prevState]
             array.splice(sourceIndex, 1) // remove the item at sourceIndex
@@ -150,7 +150,6 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         })
     }
 
-
     // Team-Team
     const swapPositions = (id1, id2) => {
         // switch Key numbers and save
@@ -167,12 +166,10 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             return array
         })
     }
-
     // Panel-Team or Subs-Team
     const swapPlayers = ( id, destId ) => {
-
-        const {sourceIdx, setSource, source} = getPlayer(id)
-        const {destIdx, setDest, dest} = getPlayer(destId)
+        const [sourceIdx, setSource, source] = getPlayer(id)
+        const [destIdx, setDest, dest] = getPlayer(destId)
         let temp = source[sourceIdx]
         let destPlayer = dest[destIdx]
 
@@ -181,7 +178,7 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             // update source player with Team Player key and position
             temp.key = destPlayer.name
             temp.position = destPlayer.position
-            temp.positionName = destPlpayer.positionName
+            temp.positionName = destPlayer.positionName
             array.splice(destIdx, 1, temp)
             return array
         })
@@ -197,34 +194,34 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             }
         })
     }
-
     // Panel-Subs or Subs-Panel
-    const movePlayer = (id, destId, setDest ) => {
+    const movePlayer = ( destId, sourceId ) => {
 
-        let {sourceIdx, setSource, source} = getPlayer(id)
-        let {destIdx, setDest, dest} = getPlayer(destId)
+        let [sourceIdx, setSource, source] = getPlayer(sourceId)
+        let [destIdx, setDest, dest] = getPlayer(destId)
+
         const temp = source[sourceIdx]
         // move sourcePlayer to Dest at destIdx
         // delete sourcePlayer from source
         setDest(prevState => {
             const array  = [...prevState]
-            array.splice(destIdx, 0, source[sourceIdx])
+            array.splice(destIdx, 0, temp)
             return array
         })
         setSource(prevState => {
-            const array = prevState.find(p => p.id !== id)
+            let array = prevState.filter(p => p.id !== sourceId)
+            array = removeDuplicates(array)
             return array
         })
-
     }
-
     // Team-Panel or Team-Subs
-    const moveTeamPLayer = (id, destId) => {
+    const moveTeamPlayer = (id, destId) => {
         const sourceIdx = team.findIndex(p => p.id = id)
-        const {destIdx, setDest, dest} = getPlayer()
+        const [destIdx, setDest, dest] = getPlayer(id)
         const temp = team[sourceIdx]
-        setTemp( prevState => {
+        setTeam( prevState => {
             const array = [...prevState]
+            array.splice(destId, 1, )
             array[sourceIdx].id=v4()
             array[sourceIdx].name = ""
             return array
@@ -236,119 +233,148 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             array.splice(destId, 0, temp)
             return array
         })
-
-
-
-
+    }
+    // Panel-Panel or Subs-Subs
+    const insertPlayer = (id, destId) => {
+        const [sourceIdx, setSourceList, source] = getPlayer(id)
+        const [destIdx, setDestList, dest] = getPlayer(destId)
+        const player = source[sourceIdx]
+        setDestList(prevState => {
+            const array = [...prevState]
+            array.splice(sourceIdx,1)
+            array.splice(destIdx,0,player)
+            return array
+        })
     }
 
+    // Panel-Panel or Subs-Subs
+    const insertPlayerIdx = (sourceIdx, destIdx, setDestList) => {
+        // const {sourceIdx, setSourceList, source} = getPlayer(id)
+        // const {destIdx, setDestList, dest} = getPlayer(destId)
+
+        const player = source[sourceIdx]
+        setDestList(prevState => {
+            const array = [...prevState]
+            array.splice(sourceIdx,1)
+            array.splice(destIdx,0,player)
+            return array
+        })
+    }
 
     const getPlayer = (id) => {
-        const idx1 = panel.findIndex(p => p.id = id)
-        const idx2 = panel.findIndex(p => p.id = id)
-        if (idx1)
-            return {idx1, setPanel, panel}
-        if (idx2)
-            return {idx2, setSubs, subs}
+
+        const idx1 = panel.findIndex(p => p.id === id)
+        const idx2 = subs.findIndex(p => p.id === id)
+        const idx3 = team.findIndex(p => p.id === id)
+
+        console.log("Idx1: " + idx1)
+        console.log("Idx2: " + idx2)
+        console.log("Idx3: " + idx3)
+
+        if (idx1 >= 0) {
+            return [idx1, setPanel, panel]
+        }
+        if (idx2 >= 0) {
+            return [idx2, setSubs, subs]
+        }
+        if (idx3 >= 0) {
+            return [idx3, setTeam, team]
+        }
     }
 
+    const onDrop = (box , destId, source, sourcePlayer, destPlayer)  => {
 
-
-
-
-
-    }
-
-
-
-    const movePlayer = () => {
-
-    }
-    const swapTeamPlayer = () => {
-
-    }
-
-
-
-
-    const onDrop = (box , id,  source, player, destPlayer)  => {
-        const dest = whatTableIsId(team, panel, subs, id)
-        const sourc = whatTableIsId(team, panel, subs, player.id)
-        const destination =  whereIsId(team, panel, subs,id)
-        const sc = whereIsId(team, panel, subs,player.id)
-        const sourceIndex = findIndex(sourc, player.id)
-        const destIndex = findIndex(dest, id)
-        const destKeyIndex = destPlayer.key
-
+        const [sourceIdx, setSourceList, sourceList] = getPlayer(sourcePlayer.id)
+        const [destIdx, setDestList, destList]       = getPlayer(destId)
 
         // don't move around empty objects
-        if(player.name === undefined || player.name === "") return
+        if (sourcePlayer.name === undefined || sourcePlayer.name === "") return
 
 
+        if (destList === subs) {
+            if (sourceList === panel) movePlayer(    destId, sourcePlayer.id)
+            if (sourceList === subs)  insertPlayer(  destId, sourcePlayer.id)
+            if (sourceList === team)  swapPlayers(   destId, sourcePlayer.id)
 
-        // being dropped onto 'destination'
-        checkGW(panel, team, subs, 16, "Before Changes")
-        switch(destination) {
-            case "Panel":
-                if (sc === "Subs")    {
-                    // from player from subs before adding to panel
-                    // listRemove(sourceIndex, setSubs, player.id, id, "Subs")
-                    listRemove2( player.id )
+        } else if (destList === panel) {
+            if (sourceList === panel) insertPlayer(  destId, sourcePlayer.id)
+            if (sourceList === subs)  movePlayer(    destId, sourcePlayer.id)
+            if (sourceList === team)  swapPlayers(   destId, sourcePlayer.id)
 
-                    // add player to panel
-                    listAdd(destIndex, setPanel, player, "Panel")
-                }
-                if (sc === "Team") {
-                    // remove player from team before adding to panel
-                    // listRemove(sourceIndex, setTeam, player.id, id, "Team")
-                    listRemove2( player.id )
-                    // add player to panel
-                    listAdd(destIndex, setPanel, player, "Panel")
-                }
-                if (sc === "Panel") {
-                    // move up/down within the list
-                    insertPlayer( player, destIndex, sourceIndex, setPanel)
-                }
-                break
-            case "Team":
-                if ( sc === "Panel")    {
-                    // move position and key values over to new player
-                    destPlayer = resetTeamPlayer(destPlayer, player)
-                    listRemove2( player.id )
-
-                    // listRemove(sourceIndex, setPanel, player.id , id , "Panel") // remove from Panel
-                    listAdd(destKeyIndex-1, setTeam, player, "Team") // add to team
-                }
-                if ( sc === "Subs")  {
-
-                    destPlayer = resetTeamPlayer(destPlayer, player)
-                    listRemove2( player.id )
-
-                    // listRemove(sourceIndex, setSubs, player.id , id  , "Subs")
-                    listAdd(destKeyIndex-1, setTeam, player, "Team")
-                }
-                if (sc === "Team") {
-                    switchPlayers(destPlayer, player)
-                }
-                break
-            case "Subs":
-                if (sc === "Panel")    {
-                    listRemove2( player.id )
-                    // listRemove(sourceIndex, setPanel, player.id, id,"Panel")
-                    listAdd(destIndex, setSubs, player, "Subs")
-                }
-                if (sc === "Team")     {
-                    // listRemove(sourceIndex, setTeam,  player.id, id,"Team")
-                    listRemove2( player.id )
-
-                    listAdd(destIndex, setSubs, player, "Subs")
-                }
-                if (sc === "Subs") {
-                    // move up/down within the list
-                    insertPlayer( player, destIndex, sourceIndex, setSubs)
-                }
-                break
+        } else if (destList === team) {
+            if (sourceList === panel) swapPlayers(   destId, sourcePlayer.id)
+            if (sourceList === subs)  swapPlayers(   destId, sourcePlayer.id)
+            if (sourceList === team)  swapPositions( destId, sourcePlayer.id)
         }
+
+        // const dest = whatTableIsId(team, panel, subs, id)
+        // const sourc = whatTableIsId(team, panel, subs, player.id)
+        // const destination =  whereIsId(team, panel, subs,id)
+        // const sc = whereIsId(team, panel, subs,player.id)
+        // const sourceIndex = findIndex(sourc, player.id)
+        // const destIndex = findIndex(dest, id)
+        // const destKeyIndex = destPlayer.key
+        // switch(destination) {
+        //     case "Panel":
+        //         if (sc === "Subs")    {
+        //             // from player from subs before adding to panel
+        //             // listRemove(sourceIndex, setSubs, player.id, id, "Subs")
+        //             listRemove2( player.id )
+        //
+        //             // add player to panel
+        //             listAdd(destIndex, setPanel, player, "Panel")
+        //         }
+        //         if (sc === "Team") {
+        //             // remove player from team before adding to panel
+        //             // listRemove(sourceIndex, setTeam, player.id, id, "Team")
+        //             listRemove2( player.id )
+        //             // add player to panel
+        //             listAdd(destIndex, setPanel, player, "Panel")
+        //         }
+        //         if (sc === "Panel") {
+        //             // move up/down within the list
+        //             insertPlayer( player, destIndex, sourceIndex, setPanel)
+        //         }
+        //         break
+        //     case "Team":
+        //         if ( sc === "Panel")    {
+        //             // move position and key values over to new player
+        //             destPlayer = resetTeamPlayer(destPlayer, player)
+        //             listRemove2( player.id )
+        //
+        //             // listRemove(sourceIndex, setPanel, player.id , id , "Panel") // remove from Panel
+        //             listAdd(destKeyIndex-1, setTeam, player, "Team") // add to team
+        //         }
+        //         if ( sc === "Subs")  {
+        //
+        //             destPlayer = resetTeamPlayer(destPlayer, player)
+        //             listRemove2( player.id )
+        //
+        //             // listRemove(sourceIndex, setSubs, player.id , id  , "Subs")
+        //             listAdd(destKeyIndex-1, setTeam, player, "Team")
+        //         }
+        //         if (sc === "Team") {
+        //             switchPlayers(destPlayer, player)
+        //         }
+        //         break
+        //     case "Subs":
+        //         if (sc === "Panel")    {
+        //             listRemove2( player.id )
+        //             // listRemove(sourceIndex, setPanel, player.id, id,"Panel")
+        //             listAdd(destIndex, setSubs, player, "Subs")
+        //         }
+        //         if (sc === "Team")     {
+        //             // listRemove(sourceIndex, setTeam,  player.id, id,"Team")
+        //             listRemove2( player.id )
+        //
+        //             listAdd(destIndex, setSubs, player, "Subs")
+        //         }
+        //         if (sc === "Subs") {
+        //             // move up/down within the list
+        //             insertPlayer( player, destIndex, sourceIndex, setSubs)
+        //         }
+        //         break
+        // }
 
     }
 
