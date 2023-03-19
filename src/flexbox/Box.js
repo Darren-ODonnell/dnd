@@ -23,15 +23,20 @@ const BoxWrapper = styled.div`
 `;
 
 const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
+    let srce = source
+    let dest = []
     const ref = useRef(null);
 
     const [{ isDragging }, drag] = useDrag(() => ({
+
         type: "ITEM",
         item: { player },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
             // canDrop: monitor.canDrop(),
         }),
+        srce: source,
+
     }));
 
     const [{ canDrop, isOver }, drop] = useDrop(() => ({
@@ -45,7 +50,10 @@ const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
 
             // console.log("player id: "+id+ " Player name: "+name)
 
-            onDrop(newBox, id, source, item.player, player);
+            // const onDrop = (box , destId, source, sourcePlayer, destPlayer)  => {
+            dest = source
+            // const onDrop = (box , sourceId, destId,         destPlayer, dest)  => {
+            onDrop(        newBox,id,       item.player.id,    player,     dest);
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),

@@ -55,7 +55,7 @@ const PanelContainer = ({ panel, onDrop }) => {
                         y={top}
                         onDrop={onDrop}
                         style={{marginLeft: "5px"}}
-                        source="Panel"
+                        source={panel}
                     />
                 );
             })}
@@ -207,7 +207,7 @@ const TeamContainer   = ({team, onDrop}) => {
                     id     = {left.id}   player={left}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
-                    source="Team"
+                    source={team}
                 />
             )
         }
@@ -220,7 +220,7 @@ const TeamContainer   = ({team, onDrop}) => {
                     id={middle.id}                          player={middle}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
-                    source="Team"
+                    source={team}
                 />
             )
         }
@@ -233,7 +233,7 @@ const TeamContainer   = ({team, onDrop}) => {
                     id={right.id}                          player={right}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
-                    source="Team"
+                    source={team}
                 />
             )
         }
@@ -255,7 +255,7 @@ const TeamContainer   = ({team, onDrop}) => {
                     id     = {left.id}                          player={left}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
-                    source="Team"
+                    source={team}
                 />
             )
         }
@@ -269,7 +269,7 @@ const TeamContainer   = ({team, onDrop}) => {
                     id={right.id}  player={right}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
-                    source="Team"
+                    source={team}
                 />
             )
         }
@@ -292,7 +292,7 @@ const TeamContainer   = ({team, onDrop}) => {
                     id={middle.id}  player={middle}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
-                    source="Team"
+                    source={team}
                 />
             )
         }
@@ -332,7 +332,7 @@ const TeamContainer   = ({team, onDrop}) => {
                             y={top}
                             onDrop={onDrop}
                             style={{marginLeft: "13px"}}
-                            source="Subs"
+                            source={subs}
                         />
                     );
                 })}
