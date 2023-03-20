@@ -76,6 +76,9 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
 
         setDest(prevState => {
             const array = [...prevState]
+            sourcePlayer.key = destPlayer.key
+            sourcePlayer.position = destPlayer.position
+            sourcePlayer.positionName = destPlayer.positionName
             // update source player with Team Player key and position
             array[destIdx] = sourcePlayer
             return array
