@@ -3,6 +3,7 @@ import React from "react";
 import {DndContext, DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import './App.css';
+import {v4} from 'uuid'
 
 import TeamsheetDnd from "./TeamsheetDnd";
 
@@ -16,11 +17,11 @@ let myTeam = [
     { key: 7 , id: 7 , name: "Chris Lee"     , position: 7},
     { key: 8 , id: 8 , name: "Linda Brown"   , position: 8},
     { key: 9 , id: 9 , name: "Adam Garcia"   , position: 9},
-    { key: 10, id: 0 , name: ""              , position: 0},
-    { key: 11, id: 0 , name: ""              , position: 0},
-    { key: 12, id: 0 , name: ""              , position: 0},
-    { key: 13, id: 0 , name: ""              , position: 0},
-    { key: 14, id: 0 , name: ""              , position: 0},
+    { key: 10, id: v4() , name: ""              , position: 0},
+    { key: 11, id: v4() , name: ""              , position: 0},
+    { key: 12, id: v4() , name: ""              , position: 0},
+    { key: 13, id: v4() , name: ""              , position: 0},
+    { key: 14, id: v4() , name: ""              , position: 0},
     { key: 15, id: 15, name: "Frank Robinson", position: 15},
 
     // { key:  10, id: 10, name: "Amy Patel"       , position: 10},

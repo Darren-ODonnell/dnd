@@ -16,7 +16,7 @@ Bugs
 
 New Code
 ========
-    N04: 
+    N04: Rewrite onDrop logic
     N05: 
     N06: 
 

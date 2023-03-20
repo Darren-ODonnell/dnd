@@ -131,7 +131,6 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     //
     //     })
     // };
-
     // function removeFromAll(sourceIndex, id, id2) {
     //     setSubs(prevState=> {
     //         const array = [...prevState]
@@ -151,52 +150,81 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     // }
 
     // Team-Team
-    const swapPositions = (sourceIdx, setSource,destIdx, destId, setDest, sourceId, setTeam, setPanel, source, dest) => {
-        // switch Key numbers and save
+    const swapPositions = (  sourceIdx,destIdx, setSource,setDest, sourceId,destId, source,dest) => {
+        // get players and add as temp to allow a swap of values
+        const sourcePlayer = {...source[sourceIdx]};
+        const temp = {...sourcePlayer};
+        const destPlayer = {...dest[destIdx]};
+
+        // copy data from destPlayer to temp
+        sourcePlayer.key = destPlayer.key
+        sourcePlayer.position = destPlayer.position
+        sourcePlayer.positionName = destPlayer.positionName
+
+        // copy data from sourcePlayer to destPlayer
+        destPlayer.key = temp.key
+        destPlayer.position = temp.position
+        destPlayer.positionName = temp.positionName
+
+        // update state
         setTeam(prevState => {
             const array = [...prevState]
-
-            const temp = array[sourceIdx]
-            array[sourceIdx].key = array[destIdx].key
-            array[sourceIdx].position = array[destIdx].position
-            array[destIdx].key = temp.key
-            array[destIdx].position = temp.position
+            array[destIdx] = destPlayer
+            array[sourceIdx] = sourcePlayer
             array.sort((a,b) => a.key - b.key)
             return array
         })
     }
     // Panel-Team or Subs-Team
-    const swapPlayers = ( sourceIdx, setSource,destIdx, destId, setDest, sourceId, setTeam, setPanel, source, dest ) => {
+    const swapPlayers = (    sourceIdx,destIdx, setSource,setDest, sourceId,destId, source,dest) => {
+        let playerNameEmpty = false;
 
-        let temp = source[sourceIdx]
-        let destPlayer = dest[destIdx]
+        const sourcePlayer = { ...source[ sourceIdx ] }
+        const destPlayer   = { ...dest[ destIdx ] }
+        const temp         = { ...destPlayer }
 
-        setTeam(prevState => {
+
+        // if team player name is not empty then switch Source and Dest
+        if(destPlayer.name.length > 0) {
+            let [sourceP, destP] = swap(sourcePlayer, destPlayer)
+            destP.key = source.key
+            destP.position = sourceP.position
+            destP.positionName = sourceP.positionName
+            sourceP.key = v4()
+            source.position = 0
+            source.positionName = ""
+
+        } else {
+            playerNameEmpty = true
+        }
+
+        setDest(prevState => {
             const array = [...prevState]
             // update source player with Team Player key and position
-            temp.key = destPlayer.key
-            temp.position = destPlayer.position
-            temp.positionName = destPlayer.positionName
-            array.splice(destIdx, 1, temp)
+            array[destIdx] = sourcePlayer
             return array
         })
         setSource(prevState => {
-            const array = [...prevState]
-            if (destPlayer.name.length > 0) {
-                destPlayer.key = destPlayer.key
-                destPlayer.position = 0
-                destPlayer.posiationName = ""
-                array.splice(destIdx, 1, destPlayer)
-            } else {
-                array.splice(destIdx, 1)
-            }
-            return array
+            const array = [...prevState];
+            playerNameEmpty
+                ? array.splice(sourceIdx, 1)
+                : array[sourceIdx] = destPlayer
+            return array;
         })
-    }
-    // Panel-Subs or Subs-Panel
-    const movePlayer = ( sourceIdx, setSource,destIdx, destId, setDest, sourceId, setTeam, setPanel, source, dest ) => {
 
-        const temp = source[sourceIdx]
+    }
+    const swap = (source, destination) => {
+        const temp = {...source}
+        const newSource = {...destination}
+        const newDest = {...temp}
+        return [newSource, newDest]
+
+    }
+
+    // Panel-Subs or Subs-Panel
+    const movePlayer = (     sourceIdx,destIdx, setSource,setDest, sourceId,destId, source,dest) => {
+
+        const temp = {...source[sourceIdx]}
         // move sourcePlayer to Dest at destIdx
         // delete sourcePlayer from source
         setDest(prevState => {
@@ -211,29 +239,34 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         })
     }
     // Team-Panel or Team-Subs
-    const moveTeamPlayer = (sourceIdx, setSource,destIdx, destId, setDest, sourceId, setTeam, setPanel, source, dest) => {
+    const moveTeamPlayer = ( sourceIdx,destIdx, setSource,setDest, sourceId,destId, source,dest) => {
 
-        const temp = team[sourceIdx]
-        setTeam( prevState => {
+        const temp = {...team[sourceIdx] }
+        const player = {...team[sourceIdx]}
+        // reset team position to empty
+        temp.id = v4()
+        temp.name = ""
+
+        // reset team positions when dropped into subs/panel
+        player.key = v4()
+        player.position = 0
+        player.positionName = ""
+
+        setSource( prevState => {
             const array = [...prevState]
-            array[sourceIdx].id=v4()
-            array[sourceIdx].name = ""
+            array[sourceIdx] = temp;
             return array
         })
         setDest( prevState => {
             const array = [...prevState ]
-            temp.key = v4()
-            temp.position = 0
-            array.splice(destIdx, 0, temp)
+            array.splice(destIdx, 0, player)
             return array
         })
     }
     // Panel-Panel or Subs-Subs
+    const insertPlayer = (   sourceIdx,destIdx, setSource,setDest, sourceId,destId, source,dest) => {
 
-
-    const insertPlayer = (sourceIdx, setSource,destIdx, destId, setDest, sourceId, setTeam, setPanel, source, dest) => {
-
-        const player = source[sourceIdx]
+        const player = {...source[sourceIdx]}
         setDest(prevState => {
             const array = [...prevState]
             array.splice(sourceIdx,1)
@@ -287,19 +320,19 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         if (sourcePlayer.name === undefined || sourcePlayer.name === "") return
 
         if (dest === subs) {
-            if (source === panel) movePlayer(    sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setSubs, setPanel, source, dest)
-            if (source === subs)  insertPlayer(  sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setSubs, setSubs, source,  dest)
-            if (source === team)  movePlayer(   sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setSubs, setTeam, source,  dest)
+            if (source === panel) movePlayer(    sourceIdx,destIdx, setSource,setDest,  sourcePlayer.id,destId, source,dest)
+            if (source === subs)  insertPlayer(  sourceIdx,destIdx, setSource,setDest,  sourcePlayer.id,destId,  source,dest)
+            if (source === team)  moveTeamPlayer(sourceIdx,destId,  setSource,setDest,  sourcePlayer.id,destIdx, source,dest)
 
         } else if (dest === panel) {
-            if (source === panel) insertPlayer(  sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setPanel, setPanel, source, dest)
-            if (source === subs)  movePlayer(    sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setPanel, setSubs, source,  dest)
-            if (source === team)  movePlayer(   sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setPanel, setTeam, source,  dest)
+            if (source === panel) insertPlayer(  sourceIdx,destIdx, setSource,setDest,  sourcePlayer.id,destId,  source,dest)
+            if (source === subs)  movePlayer(    sourceIdx,destIdx, setSource,setDest,  sourcePlayer.id,destId,  source,dest)
+            if (source === team)  moveTeamPlayer(sourceIdx,destId,  setSource,setDest,  sourcePlayer.id,destIdx, source,dest)
 
         } else if (dest === team) {
-            if (source === panel) swapPlayers(   sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setTeam, setPanel, source, dest)
-            if (source === subs)  swapPlayers(   sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setTeam, setSubs, source,  dest)
-            if (source === team)  swapPositions( sourceIdx, setSource,destIdx, destId, setDest, sourcePlayer.id, setTeam, setTeam, source,  dest)
+            if (source === panel) swapPlayers(   sourceIdx,destIdx, setSource,setDest, sourcePlayer.id,destId,   source,dest)
+            if (source === subs)  swapPlayers(   sourceIdx,destIdx, setSource,setDest, sourcePlayer.id,destId,   source,dest)
+            if (source === team)  swapPositions( sourceIdx,destIdx, setSource,setDest, sourcePlayer.id,destId,   source,dest)
         }
 
         // const dest = whatTableIsId(team, panel, subs, id)
