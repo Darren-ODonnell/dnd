@@ -1,11 +1,11 @@
  import {Button} from "@mui/material";
 import Box from "../flexbox/Box";
 import { Container } from 'react-bootstrap';
+import { useDrop } from "react-dnd";
 import 'bootstrap/dist/css/bootstrap.min.css'; // import Bootstrap CSS
 import './VariableGrid.css'
 import './teamsheet.css'
-// import {useDrop} from "react-dnd";
-import {checkGW} from "../TeamsheetDnd";
+
 const boxWidth         = 150
 const boxHeight        = 55
 const teamWidth        = 640
@@ -15,15 +15,12 @@ const gapWidth3        = (teamWidth - boxWidth * 2) / 3
 const gapWidthPercent4 = gapWidth4 / teamWidth
 const gapWidthPercent3 = gapWidth3 / teamWidth
 
-
 const TeamsheetContainer = ({panel,team, subs, onDrop}) => {
     const handleDrop = (box, containerId) => {
         // handle the drop event
         console.log("Box dropped into container", containerId);
         onDrop()
     };
-
-    // checkGW(panel, team, subs, 16, "TeamsheetContainer")
 
     return (
         <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>
@@ -40,6 +37,7 @@ const PanelContainer = ({ panel, onDrop }) => {
     let nextRow = 0
 
     return (
+
         <Container className="panel-container" >
             { panel.map(( member ) => {
                 const top = nextRow;
@@ -62,6 +60,55 @@ const PanelContainer = ({ panel, onDrop }) => {
         </Container>
     );
 };
+
+
+const PanelContainer2 = ({ panel, onDrop }) => {
+     let nextRow = 0
+     const [{ isOver }, drop] = useDrop(() => ({
+         accept: 'ITEM',
+         drop: (item, monitor) => {
+             const delta = monitor.getDifferenceFromInitialOffset();
+             const left = Math.round(monitor.getClientOffset().x - delta.x);
+             const top = Math.round(monitor.getClientOffset().y - delta.y);
+             onDrop(left, top, item.player);
+         },
+         collect: (monitor) => ({
+             isOver: monitor.isOver(),
+         }),
+    }));
+
+    const handleDragOver = (event) => {
+        console.log("Attempt to drop")
+        event.preventDefault();
+        onDrop(        0,id,       item.player.id,    player,     dest);
+    };
+
+     return (
+             <Container onDrop={onDrop} onDragOver={handleDragOver} className="panel-container" >
+             { panel.map(( member ) => {
+                 const top = nextRow;
+                 nextRow += 60; // Increment nextRow by 50 for the next iteration
+                 return (
+                     <Box
+                         key={member.id}
+                         id={member.id}
+                         player={member}
+                         width={150}
+                         height={50}
+                         x={0}
+                         y={top}
+                         onDrop={onDrop}
+                         style={{marginLeft: "5px"}}
+                         source={panel}
+                     />
+                 );
+             })}
+             </Container>
+
+     );
+};
+
+
 
 
 const TeamContainer   = ({team, onDrop}) => {

@@ -46,13 +46,8 @@ const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
             const left = Math.round(x + delta.x);
             const top = Math.round(y + delta.y);
             const newBox = { left, top, id };
-            // Call the onDrop function with the newBox object
 
-            // console.log("player id: "+id+ " Player name: "+name)
-
-            // const onDrop = (box , destId, source, sourcePlayer, destPlayer)  => {
             dest = source
-            // const onDrop = (box , sourceId, destId,         destPlayer, dest)  => {
             onDrop(        newBox,id,       item.player.id,    player,     dest);
         },
         collect: (monitor) => ({
