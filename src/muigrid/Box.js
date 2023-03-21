@@ -1,6 +1,7 @@
-import {useEffect, useRef} from "react";
 import {useDrag, useDrop} from "react-dnd";
 import styled from "styled-components";
+import {useEffect, useRef} from "react";
+import {findId} from "./VariableGrid";
 
 const BoxWrapper = styled.div`
   position: absolute;
@@ -22,16 +23,17 @@ const BoxWrapper = styled.div`
   opacity: ${(props) => (props.isDragging ? 0.5 : 1)};
 `;
 
-const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
+const Box = ({ array, id, player, width, height, x, y, onDrop, style , findPlayerArray }) => {
     let dest = []
     const ref = useRef(null);
 
-    // console.log("Panel: Box() - " + source.map(m => {return m.name + " - "}))
+    const temp = array
+
+    console.log("Box() - array - " + array[4].map(m => {return m.name + " - "}))
 
     const [{ isDragging }, drag] = useDrag(() => ({
-
         type: "ITEM",
-        item: { player, source },
+        item: { player },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
             // canDrop: monitor.canDrop(),
@@ -41,19 +43,22 @@ const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
     const [{ canDrop, isOver }, drop] = useDrop(() => ({
         accept: "ITEM",
         drop: (item, monitor) => {
+            const temp2 = array
+            const [, , , destParent, destArray] = findPlayerArray(id);
+            console.log("Box() - useDrop() - destArray  - idx " + findId(17, findPlayerArray(17)) +" - " + + destArray.map(m => {return m.name + " - "}))
+            console.log("Box() - useDrop() - array  - idx " + findId(17, findPlayerArray(17)) +" - " + + array[4].map(m => {return m.name + " - "}))
             const delta = monitor.getDifferenceFromInitialOffset();
             const left = Math.round(x + delta.x);
             const top = Math.round(y + delta.y);
             const newBox = { left, top, id };
 
-            console.log("Panel: useDrop() - " + source.map(m => {return m.name + " - "}))
-            onDrop(        newBox,id,       item,    player,     dest);
+            onDrop(        newBox,id,       item,    player,     destArray);
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-    }),[source]);
+    }));
 
     useEffect(() => {
         const node = ref.current;

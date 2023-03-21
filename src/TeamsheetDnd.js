@@ -15,6 +15,10 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
 
     }, [panel]);
 
+    const findId = (id) => {
+        return panel.findIndex(p=>p.id===17)
+    }
+
     const findPlayer = (id) => {
         const idx1 = panel.findIndex(p => p.id === id)
         const idx2 = subs.findIndex(p => p.id === id)
@@ -33,6 +37,20 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             return [idx3, setTeam, team[idx3], 'team']
         }
     }
+
+    const findPlayerArray = (id) => {
+        const [index, setFunction, player, parent] = findPlayer(id);
+
+        if (parent === 'panel') {
+            return [index, setFunction, player, parent, panel];
+        } else if (parent === 'subs') {
+            return [index, setFunction, player, parent, subs];
+        } else if (parent === 'team') {
+            return [index, setFunction, player, parent, team];
+        } else {
+            return [null, null, null, null, null];
+        }
+    };
 
     // Team-Team
     const swapPositions = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
@@ -53,7 +71,7 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         destPlayer.positionName = temp.positionName;
 
         // update state
-        setTeam((prevState) => {
+        setSource((prevState) => {
             const array = [...prevState];
             array[destIdx] = destPlayer;
             array[sourceIdx] = sourcePlayer;
@@ -234,33 +252,26 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     const onDrop = (box , destId, item,  destPlayer, destType2)  => {
         const sourceId = item.player.id
 
-        console.log("Here")
         const [sourceIdx, setSource, sourcePlayer, sourceType] = findPlayer(sourceId)
         const [destIdx, setDest, destPlayer2, destType] = findPlayer(destId)
-
-        // const [sourceIdx, setSource, sourcePlayer, source] = findPlayer( sourceId)
-        // const [destIdx, setDest, destPlayer2, dest2] = findPlayer( destId)
 
         const source = sourceType === 'panel' ? panel: (sourceType === 'subs' ? subs: team);
         let dest   = destType   === 'panel' ? panel: (destType   === 'subs' ? subs: team);
 
-        if (!destPlayer) {
-            dest = source;
-        }
+        if (!destPlayer) { dest = source; }
 
-
-        console.log("Panel: OnDrop() - " + panel.map(m => {return m.name + " - "}))
+        console.log("Panel: OnDrop() - idx " + findId(17) +" - " + panel.map(m => {return m.name + " - "}))
 
         // don't move around empty objects
         if (sourcePlayer.name === undefined || sourcePlayer.name === "") return
 
         if (dest === subs) {
             if (source === panel) movePlayer(    sourceIdx,destIdx, setPanel,setSubs,  sourcePlayer.id,destId, panel,subs)
-            if (source === subs)  insertPlayer(  sourceIdx,destIdx, setSubs,setSubs,   sourcePlayer.id,destId, subs,subs)
+            if (source === subs)  swapPositions(  sourceIdx,destIdx, setSubs,setSubs,   sourcePlayer.id,destId, subs,subs)
             if (source === team)  moveTeamPlayer(sourceIdx,destIdx, setTeam,setSubs,   sourcePlayer.id,destId, team,subs)
 
         } else if (dest === panel) {
-            if (source === panel) insertPlayer(  sourceIdx,destIdx, setPanel,setPanel, sourcePlayer.id,destId, panel,panel)
+            if (source === panel) swapPositions(  sourceIdx,destIdx, setPanel,setPanel, sourcePlayer.id,destId, panel,panel)
             if (source === subs)  movePlayer(    sourceIdx,destIdx, setSubs,setPanel,  sourcePlayer.id,destId, subs,panel)
             if (source === team)  moveTeamPlayer(sourceIdx,destIdx, setTeam,setPanel,  sourcePlayer.id,destId, team,panel)
 
@@ -271,13 +282,13 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         }
     }
 
-    console.log("Panel: render() - " + panel.map(m => {return m.name + " - "}))
+    console.log("Parent: render()  - idx " + findId(17) +" - " + + panel.map(m => {return m.name + " - "}))
     return (
 
     <div className="App">
 
         <DndProvider backend={HTML5Backend}>
-            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop}/>
+            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop} findPlayerArray={findPlayerArray}/>
         </DndProvider>
     </div>
   );
