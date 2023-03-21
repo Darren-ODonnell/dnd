@@ -51,33 +51,8 @@ const Layout = ({data}) => {
     // const handlePanelChange = (e) => {
     //
     // }
-    // const getPlayers = () => {
-    //
-    // }
-    // const getTeamsheet = () => {
-    //
-    // }
-    // const getFixtureDate = () => {
-    //
-    // }
-    // const getTeam = () => {
-    //
-    // }
-    // const getSubs = () => {
-    //
-    // }
-    // const getPanel = () => {
-    //
-    // }
-    //
-    // useEffect(() => {
-    //     setPlayers(getPlayers() )
-    //     setTeamsheet( getTeamsheet() )
-    //     setFixtureDate( getFixtureDate() )
-    //     setTeam( getTeam(teamsheet) )
-    //     setSubs( getSubs(teamsheet) )
-    //     setPanel( getPanel(teamsheet) )
-    // },[teamsheet])
+
+
 
 
 
