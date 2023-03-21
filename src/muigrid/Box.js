@@ -23,20 +23,19 @@ const BoxWrapper = styled.div`
 `;
 
 const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
-    let srce = source
     let dest = []
     const ref = useRef(null);
+
+    // console.log("Panel: Box() - " + source.map(m => {return m.name + " - "}))
 
     const [{ isDragging }, drag] = useDrag(() => ({
 
         type: "ITEM",
-        item: { player },
+        item: { player, source },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
             // canDrop: monitor.canDrop(),
         }),
-        srce: source,
-
     }));
 
     const [{ canDrop, isOver }, drop] = useDrop(() => ({
@@ -47,14 +46,14 @@ const Box = ({ width, height, x, y, id, player, onDrop, style , source}) => {
             const top = Math.round(y + delta.y);
             const newBox = { left, top, id };
 
-            dest = source
-            onDrop(        newBox,id,       item.player.id,    player,     dest);
+            console.log("Panel: useDrop() - " + source.map(m => {return m.name + " - "}))
+            onDrop(        newBox,id,       item,    player,     dest);
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-    }));
+    }),[source]);
 
     useEffect(() => {
         const node = ref.current;

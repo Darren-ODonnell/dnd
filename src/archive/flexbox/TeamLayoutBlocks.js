@@ -1,4 +1,4 @@
-import Box from './Box'
+import Box from '../../muigrid/Box'
 import React from "react";
 
 let text = "start"

@@ -6,8 +6,8 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import {Button} from "@mui/material"; // Replace with the path to your grass texture image file
 import '../dragndrop/dradndrop.css'
 import './flexbox2.css'
-import grassTexture from '../media/Background-Grass.png';
-import BoxContainer from "./BoxContainer";
+import grassTexture from '../../media/Background-Grass.png';
+import BoxContainer from "../../muigrid/BoxContainer";
 
 const panelList = [
     { id: 1 , name: "John Smith"           , position: "Forward" },

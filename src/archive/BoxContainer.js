@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import {useDrag, useDrop} from "react-dnd";
 import {useState, useRef} from "react";
-import Box from "./Box";
+import Box from "../muigrid/Box";
 
 const BoxWrapper = styled.div`
   position: absolute;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import DroppableContainer from './DroppableContainer';
 import DraggableList from './DraggableList';
-import { reorder } from '../helper';
+import { reorder } from '../../helper';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './dradndrop.css'

@@ -69,6 +69,10 @@ let mySubs = [
     // { key: 43, id: 43, name: "Ian Wilson"    , position: 0},
 ]
 
+const Help = () => {
+    console.log("Working")
+}
+
 const App = () => {
     return (
     <div className="App">

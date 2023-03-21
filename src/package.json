@@ -2,6 +2,9 @@
   "name": "dnd",
   "version": "0.1.0",
   "private": true,
+  "config": {
+    "NODE_MODULES_PATH": "./node_modules"
+  },
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
