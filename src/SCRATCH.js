@@ -9,3 +9,5 @@ CL - ST
 CL - EH Charlie doubled on 2nd / 3rd EH at top CL gone.
 
 Add functionality to Cancel and Save Buttons
+
+Add Drop capability to Panel and Subs

@@ -15,10 +15,6 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
 
     }, [panel]);
 
-    const findId = (id) => {
-        return panel.findIndex(p=>p.id===17)
-    }
-
     const findPlayer = (id) => {
         const idx1 = panel.findIndex(p => p.id === id)
         const idx2 = subs.findIndex(p => p.id === id)
@@ -37,7 +33,6 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             return [idx3, setTeam, team[idx3], 'team']
         }
     }
-
     const findPlayerArray = (id) => {
         const [index, setFunction, player, parent] = findPlayer(id);
 
@@ -117,7 +112,6 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             return array;
         });
     };
-
     // Panel-Subs or Subs-Panel
     const movePlayer = (     sourceIdx,destIdx, setSource,setDest, sourceId,destId, source,dest) => {
 
@@ -164,114 +158,27 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
 
     }
 
-    // Panel-Panel or Subs-Subs
-    // const insertPlayer = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
-    //     const player = source[sourceIdx] ;
-    //     setDest((prevState) => {
-    //         const array = [...prevState];
-    //         array.splice(sourceIdx, 1);
-    //         array.splice(destIdx, 0, player); // Use destIdx directly instead of calling getPlayer2
-    //         return array;
-    //     });
-    // };
-
-    // const insertPlayer = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
-    //     console.log('sourceIdx:', sourceIdx);
-    //     console.log('destIdx:', destIdx);
-    //     console.log('source:', source);
-    //     console.log('dest:', dest);
-    //
-    //     const player = source[sourceIdx];
-    //
-    //     setDest((prevState) => {
-    //         const array = [...prevState];
-    //         array.splice(sourceIdx, 1);
-    //         array.splice(destIdx, 0, player); // Use destIdx directly instead of calling getPlayer2
-    //         return array;
-    //     });
-    // };
-    const insertPlayer = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
-        if(Math.abs(sourceIdx - destIdx) <=1) {
-            console.log("Source: "+sourceIdx+ " , Dest: "+ destIdx)
-            return
-        }
-        const sourcePlayer = dest[sourceIdx]
-        const destPlayer = dest[destIdx]
-
-        const source1 = ((setDest === setPanel) ? 'panel' : (setDest === setSubs ? 'subs': 'team'))
-
-        setPanel((prevState) => {
-            const array = [...prevState]
-            if(sourceIdx < destIdx) {
-                array.splice(destIdx,0,sourcePlayer)
-                array.splice(sourceIdx,1)
-            } else {
-                array.splice(destIdx,0,sourcePlayer)
-                array.splice(sourceIdx+1,1)
-            }
-            return array
-        })
-
-        //
-        // setDest((prevState) => {
-        //     const array = [...prevState];
-        //     array.splice(sourceIdx, 1);
-        //     array.splice(destIdx, 0, player); // Use destIdx directly instead of calling getPlayer2
-        //     return array;
-        // });
-
-    };
-
-
-
-
-
-
-    // Panel-Panel or Subs-Subs
-    // const insertPlayer = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
-    //     const player = { ...source[sourceIdx] };
-    //     setDest((prevState) => {
-    //         const array = [...prevState];
-    //         array.splice(sourceIdx, 1);
-    //         const destIdx = getPlayer2(dest, destId);
-    //         array.splice(destIdx, 0, player);
-    //         return array;
-    //     });
-    // };
-
-    // const getPlayer2 = (list, id) => {
-    //     return list.findIndex((p) => p.id === id);
-    // };
-
-    const getSet = (dest) => {
-        if (dest === panel) return setPanel
-        if (dest === subs) return setSubs
-        if (dest === team) return setTeam
-    }
-
     const onDrop = (box , destId, item,  destPlayer, destType2)  => {
         const sourceId = item.player.id
 
         const [sourceIdx, setSource, sourcePlayer, sourceType] = findPlayer(sourceId)
-        const [destIdx, setDest, destPlayer2, destType] = findPlayer(destId)
+        const [destIdx  , setDest  , destPlayer2 , destType]   = findPlayer(destId)
 
         const source = sourceType === 'panel' ? panel: (sourceType === 'subs' ? subs: team);
         let dest   = destType   === 'panel' ? panel: (destType   === 'subs' ? subs: team);
 
         if (!destPlayer) { dest = source; }
 
-        console.log("Panel: OnDrop() - idx " + findId(17) +" - " + panel.map(m => {return m.name + " - "}))
-
         // don't move around empty objects
         if (sourcePlayer.name === undefined || sourcePlayer.name === "") return
 
         if (dest === subs) {
             if (source === panel) movePlayer(    sourceIdx,destIdx, setPanel,setSubs,  sourcePlayer.id,destId, panel,subs)
-            if (source === subs)  swapPositions(  sourceIdx,destIdx, setSubs,setSubs,   sourcePlayer.id,destId, subs,subs)
+            if (source === subs)  swapPositions( sourceIdx,destIdx, setSubs,setSubs,   sourcePlayer.id,destId, subs,subs)
             if (source === team)  moveTeamPlayer(sourceIdx,destIdx, setTeam,setSubs,   sourcePlayer.id,destId, team,subs)
 
         } else if (dest === panel) {
-            if (source === panel) swapPositions(  sourceIdx,destIdx, setPanel,setPanel, sourcePlayer.id,destId, panel,panel)
+            if (source === panel) swapPositions( sourceIdx,destIdx, setPanel,setPanel, sourcePlayer.id,destId, panel,panel)
             if (source === subs)  movePlayer(    sourceIdx,destIdx, setSubs,setPanel,  sourcePlayer.id,destId, subs,panel)
             if (source === team)  moveTeamPlayer(sourceIdx,destIdx, setTeam,setPanel,  sourcePlayer.id,destId, team,panel)
 
@@ -282,7 +189,6 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         }
     }
 
-    console.log("Parent: render()  - idx " + findId(17) +" - " + + panel.map(m => {return m.name + " - "}))
     return (
 
     <div className="App">
