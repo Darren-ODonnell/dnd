@@ -29,8 +29,6 @@ const TeamsheetContainer = ({panel, team, subs, onDrop, findPlayerArray}) => {
     // };
     const [source, setSource] = useState(panel);
 
-    const array = findPlayerArray(16)
-
     useEffect(() => {
         setSource(panel);
     }, [panel]);
@@ -41,13 +39,13 @@ const TeamsheetContainer = ({panel, team, subs, onDrop, findPlayerArray}) => {
         setSource(subs);
     }, [subs]);
 
-    console.log("Panel: TeamsheetContainer() - " + panel.map(m => {return m.name + " - "}))
+    //
 
     return (
         <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>
-            <PanelContainer  array={array} panel  = {panel} source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
-            <TeamContainer   array={array} team   = {team}  source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
-            <SubsContainer   array={array} subs   = {subs}  source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
+            <PanelContainer   panel  = {panel} source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
+            <TeamContainer    team   = {team}  source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
+            <SubsContainer    subs   = {subs}  source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
             <ActionContainer                  />
         </Container>
     )
@@ -56,8 +54,8 @@ export default TeamsheetContainer;
 
 const PanelContainer = ({ panel, source, onDrop, findPlayerArray, array}) => {
     let nextRow = 0
-    console.log("Panel: inside  PanelContainer()  - idx " + findId(17, findPlayerArray(17)) +" - " + panel.map(m => {return m.name + " - "}))
-    console.log("Array: inside  PanelContainer()  - idx " + findId(17, findPlayerArray(17)) +" - " + array[4].map(m => {return m.name + " - "}))
+    // console.log("Panel: inside  PanelContainer()  - idx " + findId(17, findPlayerArray(17)) +" - " + panel.map(m => {return m.name + " - "}))
+    // console.log("Array: inside  PanelContainer()  - idx " + findId(17, findPlayerArray(17)) +" - " + array[4].map(m => {return m.name + " - "}))
 
     return (
 
@@ -65,7 +63,7 @@ const PanelContainer = ({ panel, source, onDrop, findPlayerArray, array}) => {
             { panel.map(( member ) => {
                 const top = nextRow;
                 nextRow += 60; // Increment nextRow by 50 for the next iteration
-                console.log("Panel: inside  PanelContainer() - idx " + findId(17, findPlayerArray(17)) +" - " + panel.map(m => {return m.name + " - "}))
+                // console.log("Panel: inside  PanelContainer() - idx " + findId(17, findPlayerArray(17)) +" - " + panel.map(m => {return m.name + " - "}))
                 return (
                     <Box
                         key             = {member.id}
@@ -78,7 +76,7 @@ const PanelContainer = ({ panel, source, onDrop, findPlayerArray, array}) => {
                         onDrop          = {onDrop}
                         style           = {{marginLeft     : "5px"}}
                         findPlayerArray = {findPlayerArray}
-                        array           = {array}
+
                     />
                 );
             })}
@@ -231,7 +229,7 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
                     style = {{margin: "0px", fontWeight: "bold"}}
                     source={team}
                     findPlayerArray = {findPlayerArray}
-                    array           = {array}
+
                 />
             )
         }
@@ -246,7 +244,7 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
                     style = {{margin: "0px", fontWeight: "bold"}}
                     source={team}
                     findPlayerArray = {findPlayerArray}
-                    array           = {array}
+
                 />
             )
         }
@@ -261,7 +259,7 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
                     style = {{margin: "0px", fontWeight: "bold"}}
                     source={team}
                     findPlayerArray = {findPlayerArray}
-                    array           = {array}
+
                 />
             )
         }
@@ -285,7 +283,7 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
                     style = {{margin: "0px", fontWeight: "bold"}}
                     source={team}
                     findPlayerArray = {findPlayerArray}
-                    array           = {array}
+
                 />
             )
         }
@@ -301,7 +299,7 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
                     style = {{margin: "0px", fontWeight: "bold"}}
                     source={team}
                     findPlayerArray = {findPlayerArray}
-                    array           = {array}
+
                 />
             )
         }

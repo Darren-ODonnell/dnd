@@ -23,13 +23,10 @@ const BoxWrapper = styled.div`
   opacity: ${(props) => (props.isDragging ? 0.5 : 1)};
 `;
 
-const Box = ({ array, id, player, width, height, x, y, onDrop, style , findPlayerArray }) => {
+const Box = ({ id, player, width, height, x, y, onDrop, style , findPlayerArray }) => {
     let dest = []
     const ref = useRef(null);
 
-    const temp = array
-
-    console.log("Box() - array - " + array[4].map(m => {return m.name + " - "}))
 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "ITEM",
@@ -43,10 +40,10 @@ const Box = ({ array, id, player, width, height, x, y, onDrop, style , findPlaye
     const [{ canDrop, isOver }, drop] = useDrop(() => ({
         accept: "ITEM",
         drop: (item, monitor) => {
-            const temp2 = array
+
             const [, , , destParent, destArray] = findPlayerArray(id);
-            console.log("Box() - useDrop() - destArray  - idx " + findId(17, findPlayerArray(17)) +" - " + + destArray.map(m => {return m.name + " - "}))
-            console.log("Box() - useDrop() - array  - idx " + findId(17, findPlayerArray(17)) +" - " + + array[4].map(m => {return m.name + " - "}))
+            // console.log("Box() - useDrop() - destArray  - idx " + findId(17, findPlayerArray(17)) +" - " + + destArray.map(m => {return m.name + " - "}))
+            // console.log("Box() - useDrop() - array  - idx " + findId(17, findPlayerArray(17)) +" - " + + array[4].map(m => {return m.name + " - "}))
             const delta = monitor.getDifferenceFromInitialOffset();
             const left = Math.round(x + delta.x);
             const top = Math.round(y + delta.y);
