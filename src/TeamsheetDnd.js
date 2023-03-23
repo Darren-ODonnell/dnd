@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 
 const show     = ( m,v ) => { console.log(m + v)}
 const showJson = ( {m,v} ) => { console.log(m + JSON.stringify( v ))}
-const showList = ( m,v ) =>   { console.log(m + v.map(m => {return "(" + m.id + ") "+ m.name + " "}))}
+export const showList = ( m,v ) => { console.log(m + v.map(m => {return "("+m.key+")(" + m.id + ") "+ m.name + " "}))}
 
 const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     const [panel, setPanel] = useState( myPanel );
@@ -15,9 +15,9 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     const [team , setTeam]  = useState( myTeam );
 
 
-    useEffect(() => {  showList("Panel: " ,panel) }, [panel]);
-    useEffect(() => {  showList("Subs: "  ,subs)  }, [subs] );
-    useEffect(() => {  showList("Team: "  ,team)  }, [team] );
+    // useEffect(() => {  showList("Panel: " ,panel) }, [panel]);
+    // useEffect(() => {  showList("Subs: "  ,subs)  }, [subs] );
+    // useEffect(() => {  showList("Team: "  ,team)  }, [team] );
 
     const findPlayer = (id) => {
         const idx1 = panel.findIndex(p => p.id === id)
@@ -71,36 +71,53 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     };
 
     // Team-Team
-    const swapPositions = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
+    const swapPositions = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source2, dest2) => {
         // const swapPositions = (sourceId, destId) => {
         // const [sourceIdx, setSource, sourcePlayer2, parent1, source] = findPlayerArray(sourceId)
         // const [destIdx  , setDest  , destPlayer2 , parent2, dest]   = findPlayerArray(destId)
-
         // if (sourceId === destId) {
         //     console.log('source and destination are the same player');
         //     return;
         // }
-
         // if (source === dest) {
         //     console.log('source and destination are the same');
         //     console.log("SourceIdx: " + sourceIdx + " DestIdx: "+destIdx)
         // }
+
+        showList("Panel: " , panel)
+        const idxS1 = panel.findIndex(p=>p.id === sourceId)
+        const idxS2 = subs.findIndex(p=>p.id === sourceId)
+        const idxS3 = team.findIndex(p=>p.id === sourceId)
+        const idxD1 = panel.findIndex(p=>p.id === destId)
+        const idxD2 = subs.findIndex(p=>p.id === destId)
+        const idxD3 = team.findIndex(p=>p.id === destId)
+        const source = idxS1 >= 0 ? panel : (idxS2 >= 0 ? subs : team)
+        const dest = idxD1 >= 0 ? panel : (idxD2 >= 0 ? subs : team)
+
         const sourcePlayer = source[sourceIdx];
         const tempSource = { ...sourcePlayer };
         const destPlayer = dest[destIdx];
         const tempDest = { ...destPlayer };
 
+        showList("Source: " , source)
+
+        console.log("SourceIdx: " +sourceIdx+ " SourceId: " + sourceId)
+        console.log("DestIdx: " +destIdx+ " DestId: " + destId)
+
         // copy data from destPlayer to sourcePlayer
-        sourcePlayer.key = destPlayer.key;
-        sourcePlayer.position = destPlayer.position;
+        sourcePlayer.key          = destPlayer.key;
+        sourcePlayer.id          = destPlayer.id;
+
+        sourcePlayer.position     = destPlayer.position;
         sourcePlayer.positionName = destPlayer.positionName;
-        sourcePlayer.name = destPlayer.name;
+        sourcePlayer.name         = destPlayer.name;
 
         // copy data from sourcePlayer to destPlayer
-        destPlayer.key = tempSource.key;
-        destPlayer.position = tempSource.position;
-        destPlayer.positionName = tempSource.positionName;
-        destPlayer.name = tempSource.name;
+        destPlayer.key            = tempSource.key;
+        destPlayer.id             = tempSource.id;
+        destPlayer.position       = tempSource.position;
+        destPlayer.positionName   = tempSource.positionName;
+        destPlayer.name           = tempSource.name;
 
         // create copies of the source and dest arrays to avoid modifying them directly
         const newSource = [...source];
@@ -110,6 +127,7 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         newSource[destIdx] = tempSource;
 
         // update the state with the new arrays
+        showList("NewSource: " , newSource)
         setSource(newSource);
     };
     const swapPositions2 = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
@@ -257,29 +275,57 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
 
     }
 
-    const onDrop = (box , destId, item,  destPlayer, destType2)  => {
-        const sourceId = item.player.id
+    const swapTwoPlayers = (array, index1, index2) => {
+        const newArray = [...array];
+        const temp = newArray[index1];
+        newArray[index1] = newArray[index2];
+        newArray[index2] = temp;
+        return newArray;
+    };
 
+
+    const onDropContainer = (droppedBoxId, droppedBoxIndex, droppedBoxType, container) => {
+        // using boxIndex get the player id
+        // copy the player to end of panel array
+        // how to determine where the drop occurred
+
+
+        if(container==="panel") {
+
+
+
+
+        } else { // must be "subs"
+
+        }
+
+
+
+
+
+    }
+
+
+
+    const onDrop = (box , destId, item , sourceIndex)  => {
+        const sourceId = item.player.id
         const [sourceIdx, setSource, sourcePlayer, sourceType] = findPlayer(sourceId)
         const [destIdx  , setDest  , destPlayer2 , destType]   = findPlayer(destId)
 
         const source = sourceType === 'panel' ? panel: (sourceType === 'subs' ? subs: team);
         let dest     = destType   === 'panel' ? panel: (destType   === 'subs' ? subs: team);
 
-        if (!destPlayer) { dest = source; }
-
         // don't move around empty objects
         if (sourcePlayer.name === undefined || sourcePlayer.name === "") return
 
 
-        // showList("Panel: ", panel)
         if (dest === subs) {
             if (source === panel) movePlayer(    sourceIdx,destIdx, setPanel,setSubs,  sourcePlayer.id,destId, panel,subs)
-            if (source === subs)  swapPositions( sourceIdx,destIdx, setSubs,setSubs,   sourcePlayer.id,destId, subs,subs )
+            if (source === subs)  swapPositions( sourceIndex,destIdx, setSubs,setSubs,   sourcePlayer.id,destId, subs,subs )
             if (source === team)  moveTeamPlayer(sourceIdx,destIdx, setTeam,setSubs,   sourcePlayer.id,destId, team,subs )
 
         } else if (dest === panel) {
-            if (source === panel) swapPositions( sourceIdx,destIdx, setPanel,setPanel,   sourcePlayer.id,destId, panel,panel )
+                swapPositions( sourceIndex,destIdx, setPanel,setPanel,   sourcePlayer.id,destId, panel,panel )
             if (source === subs)  movePlayer(    sourceIdx,destIdx, setSubs,setPanel,  sourcePlayer.id,destId, subs,panel )
             if (source === team)  moveTeamPlayer(sourceIdx,destIdx, setTeam,setPanel,  sourcePlayer.id,destId, team,panel )
 
@@ -293,7 +339,7 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     <div className="App">
 
         <DndProvider backend={HTML5Backend}>
-            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop} findPlayerArray={findPlayerArray}/>
+            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop} onDropContainer={onDropContainer}/>
         </DndProvider>
     </div>
   );

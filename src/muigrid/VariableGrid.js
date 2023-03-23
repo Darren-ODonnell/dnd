@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // import Bootstrap CSS
 import './VariableGrid.css'
 import './teamsheet.css'
  import { useEffect, useState } from "react";
+ import {showList} from "../TeamsheetDnd";
 
 const boxWidth         = 150
 const boxHeight        = 55
@@ -21,52 +22,70 @@ export const findId = (id, array) => {
 }
 
 
-const TeamsheetContainer = ({panel, team, subs, onDrop, findPlayerArray}) => {
+const TeamsheetContainer = ({panel, team, subs, onDrop, onDropContainer}) => {
     // const handleDrop = (box, containerId) => {
     //     // handle the drop event
     //     console.log("Box dropped into container", containerId);
     //     onDrop()
     // };
-    const [source, setSource] = useState(panel);
 
-    useEffect(() => {
-        setSource(panel);
-    }, [panel]);
-    useEffect(() => {
-        setSource(team);
-    }, [team]);
-    useEffect(() => {
-        setSource(subs);
-    }, [subs]);
 
-    //
 
     return (
         <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>
-            <PanelContainer   panel  = {panel} source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
-            <TeamContainer    team   = {team}  source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
-            <SubsContainer    subs   = {subs}  source={source} onDrop = {onDrop} findPlayerArray={findPlayerArray}/>
+            <PanelContainer   panel={panel} onDrop={onDrop} onDropContainer={onDropContainer} />
+            <TeamContainer    team ={team}  onDrop={onDrop} />
+            <SubsContainer    subs ={subs}  onDrop={onDrop} onDropContainer={onDropContainer}/>
             <ActionContainer                  />
         </Container>
     )
 }
 export default TeamsheetContainer;
 
-const PanelContainer = ({ panel, source, onDrop, findPlayerArray, array}) => {
+const PanelContainer = ({ panel, onDrop, onDropContainer, }) => {
+    const container = "panel"
     let nextRow = 0
-    // console.log("Panel: inside  PanelContainer()  - idx " + findId(17, findPlayerArray(17)) +" - " + panel.map(m => {return m.name + " - "}))
-    // console.log("Array: inside  PanelContainer()  - idx " + findId(17, findPlayerArray(17)) +" - " + array[4].map(m => {return m.name + " - "}))
+    let index = 0;
+    let id
 
+    const handleBoxClick = (sourceId) => {
+        // Handle the box click event with the id of the clicked box
+        id = sourceId
+        console.log(`Box ${id} clicked!`);
+    };
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.dataTransfer.setData("boxId", id);
+        event.dataTransfer.setData("boxIndex", index);
+        event.dataTransfer.setData("boxType", "box");
+    };
+    const handleDrop = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const droppedBoxId    = event.dataTransfer.getData("boxId");
+        const droppedBoxIndex = event.dataTransfer.getData("boxIndex");
+        const droppedBoxType  = event.dataTransfer.getData("boxType");
+
+        // Call the onDrop function with the dropped box information
+        onDropContainer(droppedBoxId, droppedBoxIndex, droppedBoxType, container);
+    };
+
+    showList("Panel-Container: " , panel)
     return (
-
-        <Container className="panel-container" >
-            { panel.map(( member ) => {
+        <Container className="panel-container" onDragOver={handleDragOver} onDrop={handleDrop}>
+            { panel.map(( member, index ) => {
                 const top = nextRow;
+                console.log("Index: "+index+ ", id: "+member.id+", name: " +member.name)
+
                 nextRow += 60; // Increment nextRow by 50 for the next iteration
-                // console.log("Panel: inside  PanelContainer() - idx " + findId(17, findPlayerArray(17)) +" - " + panel.map(m => {return m.name + " - "}))
+
                 return (
                     <Box
-                        key             = {member.id}
+                        index           = {index}
+                        key             = {index}
                         id              = {member.id}
                         player          = {member}
                         width           = {150}
@@ -74,9 +93,8 @@ const PanelContainer = ({ panel, source, onDrop, findPlayerArray, array}) => {
                         x               = {0}
                         y               = {top}
                         onDrop          = {onDrop}
-                        style           = {{marginLeft     : "5px"}}
-                        findPlayerArray = {findPlayerArray}
-
+                        style           = {{marginLeft : "5px"}}
+                        onClick         = {() => handleBoxClick(member.id)}
                     />
                 );
             })}
@@ -84,7 +102,7 @@ const PanelContainer = ({ panel, source, onDrop, findPlayerArray, array}) => {
     );
 };
 
-const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
+const TeamContainer   = ({ team, onDrop}) => {
 
     let index = 0
     const keeper = {
@@ -154,14 +172,14 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
             key: 8,
             id            : team[ index ].id,
             name          : team[ index ].name,
-            position: index+1,
+            position      : index+1,
             positionName  : "Left Midfield",
         },
         right: {
             key: 9,
             id            : team[ index+1 ].id,
             name          : team[ index+1 ].name,
-            position: index+2,
+            position      : index+2,
             positionName  : "Right Midfield",
 
         },
@@ -222,14 +240,14 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
             const boxX = teamWidth * gapWidthPercent4
             return  (
                 <Box
-                    x      = {boxX}     y      = {boxY}
-                    width  = {boxWidth} height = {boxHeight}
-                    id     = {left.id}   player={left}
-                    onDrop={onDrop}
-                    style = {{margin: "0px", fontWeight: "bold"}}
-                    source={team}
-                    findPlayerArray = {findPlayerArray}
-
+                    x               = {boxX}
+                    y               = {boxY}
+                    width           = {boxWidth}
+                    height          = {boxHeight}
+                    id              = {left.id}
+                    player          = {left}
+                    onDrop          = {onDrop}
+                    style           = {{margin : "0px", fontWeight: "bold"}}
                 />
             )
         }
@@ -237,14 +255,14 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
             const boxX = teamWidth * (gapWidthPercent4 * 2 + boxWidthPercent)
             return  (
                 <Box
-                    x={boxX} y={boxY}
-                    width={boxWidth} height={boxHeight}
-                    id={middle.id}                          player={middle}
+                    x={boxX}
+                    y={boxY}
+                    width={boxWidth}
+                    height={boxHeight}
+                    id={middle.id}
+                    player={middle}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
-                    source={team}
-                    findPlayerArray = {findPlayerArray}
-
                 />
             )
         }
@@ -252,14 +270,14 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
             const boxX = teamWidth * (gapWidthPercent4 * 3 + boxWidthPercent * 2)
             return  (
                 <Box
-                    x={boxX} y={boxY}
-                    width={boxWidth} height={boxHeight}
-                    id={right.id}                          player={right}
+                    x={boxX}
+                    y={boxY}
+                    width={boxWidth}
+                    height={boxHeight}
+                    id={right.id}
+                    player={right}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
-                    source={team}
-                    findPlayerArray = {findPlayerArray}
-
                 />
             )
         }
@@ -276,14 +294,14 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
             const boxX = teamWidth * gapWidthPercent3
             return  (
                 <Box
-                    x      = {boxX}     y      = {boxY}
-                    width  = {boxWidth} height = {boxHeight}
-                    id     = {left.id}                          player={left}
-                    onDrop={onDrop}
-                    style = {{margin: "0px", fontWeight: "bold"}}
-                    source={team}
-                    findPlayerArray = {findPlayerArray}
-
+                    x      = {boxX}
+                    y      = {boxY}
+                    width  = {boxWidth}
+                    height = {boxHeight}
+                    id     = {left.id}
+                    player = {left}
+                    onDrop = {onDrop}
+                    style  = {{margin: "0px", fontWeight: "bold"}}
                 />
             )
         }
@@ -292,14 +310,14 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
             const boxX = teamWidth * (gapWidthPercent3 * 2 + boxWidthPercent )
             return  (
                 <Box
-                    x={boxX} y={boxY}
-                    width={boxWidth} height={boxHeight}
-                    id={right.id}  player={right}
-                    onDrop={onDrop}
-                    style = {{margin: "0px", fontWeight: "bold"}}
-                    source={team}
-                    findPlayerArray = {findPlayerArray}
-
+                    x      = {boxX}
+                    y      = {boxY}
+                    width  = {boxWidth}
+                    height = {boxHeight}
+                    id     = {right.id}
+                    player = {right}
+                    onDrop = {onDrop}
+                    style  = {{margin : "0px", fontWeight : "bold"}}
                 />
             )
         }
@@ -312,19 +330,18 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
         )
     }
     const OneAcross   = ({boxY, left, middle, right}) => {
-
         const Middle = () => {
             const boxX = "50%";
             return  (
                 <Box
-                    x               = {boxX} y            = {boxY}
-                    width           = {boxWidth} height   = {boxHeight}
-                    id              = {middle.id}  player = {middle}
-                    onDrop          = {onDrop}
-                    style           = {{margin : "0px", fontWeight: "bold"}}
-                    source          = {team}
-                    findPlayerArray = {findPlayerArray}
-                    array           = {array}
+                    x      = {boxX}
+                    y      = {boxY}
+                    width  = {boxWidth}
+                    height = {boxHeight}
+                    id     = {middle.id}
+                    player = {middle}
+                    onDrop = {onDrop}
+                    style  = {{margin     : "0px", fontWeight: "bold"}}
                 />
             )
         }
@@ -343,9 +360,9 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
             </Container>
     )
 }
-    const SubsContainer   = ({ subs, source, onDrop, findPlayerArray, array}) => {
+const SubsContainer   = ({ subs, onDrop}) => {
 
-
+    const container="subs"
         let nextRow = 0
         return (
 
@@ -355,26 +372,21 @@ const TeamContainer   = ({ team, source, onDrop, findPlayerArray, array}) => {
                     nextRow += 60; // Increment nextRow by 60 for the next iteration
                     return (
                         <Box
-                            key             = {member.id}
-                            id              = {member.id}
-                            player          = {member}
-                            width           = {150}
-                            height          = {50}
-                            x               = {0}
-                            y               = {top}
-                            onDrop          = {onDrop}
-                            style           = {{marginLeft     : "13px"}}
-                            source          = {subs}
-                            findPlayerArray = {findPlayerArray}
-                            array           = {array}
+                            key      = {member.id}
+                            id       = {member.id}
+                            x        = {0}
+                            y        = {top}
+                            width    = {150}
+                            height   = {50}
+                            player   = {member}
+                            onDrop   = {onDrop}
+                            style    = {{marginLeft     : "13px"}}
                         />
                     );
                 })}
             </Container>
         );
     };
-
-
 const ActionContainer = () => {
     return (
         <Container className="action-container">
