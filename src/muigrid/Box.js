@@ -9,7 +9,6 @@ const BoxWrapper = styled.div`
   height: ${(props) => props.height}px;
   top: ${(props) => props.y}px;
   left: ${(props) => props.x}px;
-  background-color: lightblue;
   border-radius: 10px;
   border: 5px solid lightblue;
   display: flex;
@@ -24,23 +23,33 @@ const BoxWrapper = styled.div`
 `;
 
 
-const Box = ({ index, id, player, width, height, x, y, onDrop, style , onClick}) => {
+const Box = ({ index, id, player, width, height, x, y, onDrop, style }) => {
     const ref = useRef(null);
 
     const handleClick = (id) => {
         // Call the onClick callback function with the box id
         console.log("HandleClick: " + id)
-        onClick(id);
+        // if(typeof onClick === "function") {
+        //     onClick( id );
+        // }
+
     };
 
 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "ITEM",
-        item: { player, index },
+        item: () => {
+            console.log("HandleDragBegin: " + id);
+            // if (typeof onClick === "function") {
+            //     onClick(id);
+            // }
+            return { id, player, index };
+        },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
     }));
+
 
     const [{ canDrop, isOver }, drop] = useDrop(() => ({
         accept: "ITEM",
@@ -52,7 +61,6 @@ const Box = ({ index, id, player, width, height, x, y, onDrop, style , onClick})
 
             const initialSourceClientOffset = monitor.getInitialSourceClientOffset();
             const draggedItemIndex = Math.floor(initialSourceClientOffset.y / 60);
-
 
             console.log("OnDrop - id: " + id + ", item.player.id: " + item.player.id + ", player.id: " + player.id)
 
@@ -69,32 +77,33 @@ const Box = ({ index, id, player, width, height, x, y, onDrop, style , onClick})
         drag(drop(node));
     }, [drag, drop]);
 
-const styles = {
-    position       : "absolute",
-    width          : `${width}px`,
-    height         : `${height}px`,
-    top            : `${y}px`,
-    left           : `${x}px`,
-    backgroundColor: "lightblue",
-    borderRadius   : "10px",
-    border         : "5px solid blue",
-    // display: "flex",
-    fontSize       : "16px",
-    // textAlign: 'center',
-    cursor         : "move",
-    justifyContent : "center",
-    opacity        : isDragging ? 0.5: 1,
-    marginLeft     : '5px',
-    ...style,
-};
+    const styles = {
+        position       : "absolute",
+        width          : `${width}px`,
+        height         : `${height}px`,
+        top            : `${y}px`,
+        left           : `${x}px`,
+        backgroundColor: "lightblue",
+        borderRadius   : "10px",
+        border         : "5px solid blue",
+        // display: "flex",
+        fontSize       : "16px",
+        // textAlign: 'center',
+        cursor         : "move",
+        justifyContent : "center",
+        opacity        : isDragging ? 0.5: 1,
+        marginLeft     : '5px',
+        ...style,
+    };
 
     return (
-        <div className="box" onClick={() => handleClick(id)}>
+        <div className="box" >
             <BoxWrapper
                 ref={ref}
                 style={styles}
                 isDragging={isDragging}
                 isOver={isOver}
+                onClick={() => handleClick(id)}
             >
                 {player.name}
             </BoxWrapper>
@@ -104,75 +113,3 @@ const styles = {
 
 export default Box;
 
-
-//
-// const Box = ({ id, player, width, height, x, y, onDrop, style }) => {
-//     const ref = useRef(null);
-//
-//
-//     const [{ isDragging }, drag] = useDrag(() => ({
-//         type: "ITEM",
-//         item: { player },
-//         collect: (monitor) => ({
-//             isDragging: monitor.isDragging(),
-//             // canDrop: monitor.canDrop(),
-//         }),
-//     }));
-//
-//     const [{ canDrop, isOver }, drop] = useDrop(() => ({
-//         accept: "ITEM",
-//         drop: (item, monitor) => {
-//
-//             const delta = monitor.getDifferenceFromInitialOffset();
-//             const left = Math.round(x + delta.x);
-//             const top = Math.round(y + delta.y);
-//             const newBox = { left, top, id };
-//
-//             console.log("OnDrop - id: "+id + ", item.player.id: "+item.player.id + ", player.id: " +player.id )
-//
-//             onDrop(        newBox,id,       item,    player);
-//         },
-//         collect: (monitor) => ({
-//             isOver: monitor.isOver(),
-//             canDrop: monitor.canDrop(),
-//         }),
-//     }));
-//
-//     useEffect(() => {
-//         const node = ref.current;
-//         drag(drop(node));
-//     }, [drag, drop]);
-//
-//     const styles = {
-//         position       : "absolute",
-//         width          : `${width}px`,
-//         height         : `${height}px`,
-//         top            : `${y}px`,
-//         left           : `${x}px`,
-//         backgroundColor: "lightblue",
-//         borderRadius   : "10px",
-//         border         : "5px solid blue",
-//         // display: "flex",
-//         fontSize       : "16px",
-//         // textAlign: 'center',
-//         cursor         : "move",
-//         justifyContent : "center",
-//         opacity        : isDragging ? 0.5: 1,
-//         marginLeft     : '5px',
-//         ...style,
-//     };
-//
-//     return (
-//         <BoxWrapper
-//             ref={ref}
-//             style={styles}
-//             isDragging={isDragging}
-//             isOver={isOver}
-//         >
-//             {player.name}
-//         </BoxWrapper>
-//     );
-// };
-//
-// export default Box;
-//

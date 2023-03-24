@@ -1,4 +1,4 @@
- import {Button} from "@mui/material";
+import {Button} from "@mui/material";
 import Box from "./Box";
 import { Container } from 'react-bootstrap';
 import { useDrop } from "react-dnd";
@@ -22,7 +22,7 @@ export const findId = (id, array) => {
 }
 
 
-const TeamsheetContainer = ({panel, team, subs, onDrop, onDropContainer}) => {
+const TeamsheetContainer = ({panel, team, subs, onDrop}) => {
     // const handleDrop = (box, containerId) => {
     //     // handle the drop event
     //     console.log("Box dropped into container", containerId);
@@ -33,26 +33,20 @@ const TeamsheetContainer = ({panel, team, subs, onDrop, onDropContainer}) => {
 
     return (
         <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>
-            <PanelContainer   panel={panel} onDrop={onDrop} onDropContainer={onDropContainer} />
+            <PanelContainer   panel={panel} onDrop={onDrop}  />
             <TeamContainer    team ={team}  onDrop={onDrop} />
-            <SubsContainer    subs ={subs}  onDrop={onDrop} onDropContainer={onDropContainer}/>
+            <SubsContainer    subs ={subs}  onDrop={onDrop} />
             <ActionContainer                  />
         </Container>
     )
 }
 export default TeamsheetContainer;
 
-const PanelContainer = ({ panel, onDrop, onDropContainer, }) => {
+const PanelContainer = ({ panel, onDrop }) => {
     const container = "panel"
     let nextRow = 0
     let index = 0;
     let id
-
-    const handleBoxClick = (sourceId) => {
-        // Handle the box click event with the id of the clicked box
-        id = sourceId
-        console.log(`Box ${id} clicked!`);
-    };
 
     const handleDragOver = (event) => {
         event.preventDefault();
@@ -61,40 +55,39 @@ const PanelContainer = ({ panel, onDrop, onDropContainer, }) => {
         event.dataTransfer.setData("boxIndex", index);
         event.dataTransfer.setData("boxType", "box");
     };
-    const handleDrop = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
+    const [, drop] = useDrop(() => ({
+        accept: "ITEM",
+        drop: (item, monitor) => {
+            const droppedBoxId = item.id;
+            console.log(`Dropped box id: ${droppedBoxId}`);
 
-        const droppedBoxId    = event.dataTransfer.getData("boxId");
-        const droppedBoxIndex = event.dataTransfer.getData("boxIndex");
-        const droppedBoxType  = event.dataTransfer.getData("boxType");
+            // Call the onDropContainer function with the dropped box information
+            onDrop(droppedBoxId, item.index, "box", container);
+        },
+    }));
 
-        // Call the onDrop function with the dropped box information
-        onDropContainer(droppedBoxId, droppedBoxIndex, droppedBoxType, container);
-    };
 
     showList("Panel-Container: " , panel)
     return (
-        <Container className="panel-container" onDragOver={handleDragOver} onDrop={handleDrop}>
+        <Container className="panel-container" onDragOver={handleDragOver} ref={drop}>
             { panel.map(( member, index ) => {
                 const top = nextRow;
-                console.log("Index: "+index+ ", id: "+member.id+", name: " +member.name)
+                nextRow += 60; // Increment nextRow by 60 for the next iteration
 
-                nextRow += 60; // Increment nextRow by 50 for the next iteration
+                console.log("Index: "+index+ ", id: "+member.id+", name: " +member.name)
 
                 return (
                     <Box
-                        index           = {index}
-                        key             = {index}
-                        id              = {member.id}
-                        player          = {member}
-                        width           = {150}
-                        height          = {50}
-                        x               = {0}
-                        y               = {top}
-                        onDrop          = {onDrop}
-                        style           = {{marginLeft : "5px"}}
-                        onClick         = {() => handleBoxClick(member.id)}
+                        index   = {index}
+                        key     = {index}
+                        id      = {member.id}
+                        player  = {member}
+                        width   = {150}
+                        height  = {50}
+                        x       = {0}
+                        y       = {top}
+                        onDrop  = {onDrop}
+                        style   = {{marginLeft : "5px"}}
                     />
                 );
             })}
@@ -360,18 +353,39 @@ const TeamContainer   = ({ team, onDrop}) => {
             </Container>
     )
 }
-const SubsContainer   = ({ subs, onDrop}) => {
-
+const SubsContainer  = ({ subs, onDrop }) => {
     const container="subs"
-        let nextRow = 0
+    let nextRow = 0
+    let index = 0;
+    let id
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.dataTransfer.setData("boxId", id);
+        event.dataTransfer.setData("boxIndex", index);
+        event.dataTransfer.setData("boxType", "box");
+    };
+    const [, drop] = useDrop(() => ({
+        accept: "ITEM",
+        drop: (item, monitor) => {
+            const droppedBoxId = item.id;
+            console.log(`Dropped box id: ${droppedBoxId}`);
+
+            // Call the onDropContainer function with the dropped box information
+            onDrop(droppedBoxId, item.index, "box", container);
+        },
+    }));
+
         return (
 
-            <Container className="subs-container">
+            <Container className="subs-container" onDragOver={handleDragOver} ref={drop}>
                 {subs.map((member) => {
                     const top = nextRow;
                     nextRow += 60; // Increment nextRow by 60 for the next iteration
                     return (
                         <Box
+                            index    = {index}
                             key      = {member.id}
                             id       = {member.id}
                             x        = {0}
