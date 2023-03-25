@@ -22,7 +22,7 @@ export const findId = (id, array) => {
 }
 
 
-const TeamsheetContainer = ({panel, team, subs, onDrop}) => {
+const TeamsheetContainer = ({panel, team, subs, onDrop,onDropContainer}) => {
     // const handleDrop = (box, containerId) => {
     //     // handle the drop event
     //     console.log("Box dropped into container", containerId);
@@ -33,16 +33,16 @@ const TeamsheetContainer = ({panel, team, subs, onDrop}) => {
 
     return (
         <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>
-            <PanelContainer   panel={panel} onDrop={onDrop}  />
+            <PanelContainer   panel={panel} onDrop={onDrop} onDropContainer={onDropContainer} />
             <TeamContainer    team ={team}  onDrop={onDrop} />
-            <SubsContainer    subs ={subs}  onDrop={onDrop} />
+            <SubsContainer    subs ={subs}  onDrop={onDrop} onDropContainer={onDropContainer}/>
             <ActionContainer                  />
         </Container>
     )
 }
 export default TeamsheetContainer;
 
-const PanelContainer = ({ panel, onDrop }) => {
+const PanelContainer = ({ panel, onDrop,onDropContainer }) => {
     const container = "panel"
     let nextRow = 0
     let index = 0;
@@ -62,7 +62,7 @@ const PanelContainer = ({ panel, onDrop }) => {
             console.log(`Dropped box id: ${droppedBoxId}`);
 
             // Call the onDropContainer function with the dropped box information
-            onDrop(droppedBoxId, item.index, "box", container);
+            onDropContainer(droppedBoxId, item.index, "box", container);
         },
     }));
 
@@ -324,7 +324,7 @@ const TeamContainer   = ({ team, onDrop}) => {
     }
     const OneAcross   = ({boxY, left, middle, right}) => {
         const Middle = () => {
-            const boxX = "50%";
+            const boxX = teamWidth * (gapWidthPercent4 * 2 + boxWidthPercent )
             return  (
                 <Box
                     x      = {boxX}
@@ -353,7 +353,7 @@ const TeamContainer   = ({ team, onDrop}) => {
             </Container>
     )
 }
-const SubsContainer  = ({ subs, onDrop }) => {
+const SubsContainer  = ({ subs, onDrop, onDropContainer }) => {
     const container="subs"
     let nextRow = 0
     let index = 0;
@@ -373,7 +373,7 @@ const SubsContainer  = ({ subs, onDrop }) => {
             console.log(`Dropped box id: ${droppedBoxId}`);
 
             // Call the onDropContainer function with the dropped box information
-            onDrop(droppedBoxId, item.index, "box", container);
+            onDropContainer(droppedBoxId, item.index, "box", container);
         },
     }));
 

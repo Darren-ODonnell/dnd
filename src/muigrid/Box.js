@@ -1,7 +1,6 @@
 import {useDrag, useDrop} from "react-dnd";
 import styled from "styled-components";
-import {findId} from "./VariableGrid";
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 const BoxWrapper = styled.div`
   position: absolute;
@@ -22,27 +21,18 @@ const BoxWrapper = styled.div`
   opacity: ${(props) => (props.isDragging ? 0.5 : 1)};
 `;
 
-
 const Box = ({ index, id, player, width, height, x, y, onDrop, style }) => {
     const ref = useRef(null);
 
     const handleClick = (id) => {
         // Call the onClick callback function with the box id
         console.log("HandleClick: " + id)
-        // if(typeof onClick === "function") {
-        //     onClick( id );
-        // }
-
     };
-
 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "ITEM",
         item: () => {
             console.log("HandleDragBegin: " + id);
-            // if (typeof onClick === "function") {
-            //     onClick(id);
-            // }
             return { id, player, index };
         },
         collect: (monitor) => ({
@@ -63,7 +53,6 @@ const Box = ({ index, id, player, width, height, x, y, onDrop, style }) => {
             const draggedItemIndex = Math.floor(initialSourceClientOffset.y / 60);
 
             console.log("OnDrop - id: " + id + ", item.player.id: " + item.player.id + ", player.id: " + player.id)
-
             onDrop(newBox, id, item, draggedItemIndex);
         },
         collect: (monitor) => ({

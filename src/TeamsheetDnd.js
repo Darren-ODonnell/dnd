@@ -88,9 +88,10 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         console.log("DestIdx: " +destIdx+ " DestId: " + destId)
 
         // do not copy if player already exists in list
+        // does not work for team - team
 
-        const exists = dest.find(p=>p.name === destPlayer.name)
-        if(exists) return
+        // const exists = dest.find(p=>p.name === destPlayer.name)
+        // if(exists) return
 
         // copy data from destPlayer to sourcePlayer
 
@@ -121,6 +122,24 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
         showList("NewSource: " , newSource)
         setSource(newSource);
     };
+
+    const resetPlayer = (player,source) => {
+        const temp = {...player}
+        switch(source) {
+            case "id":
+                temp.id = v4()
+                temp.name = ""
+                break
+            case "key":
+                temp.key = v4();
+                temp.position = 0;
+                temp.positionName = "";
+                break
+        }
+
+        return temp
+    }
+
     const swapPositions2 = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
         // get players and add as temp to allow a swap of values
 
@@ -168,19 +187,6 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
             newArray.sort((a, b) => a.key - b.key);
             return newArray;
         });
-
-
-
-
-
-        // update state
-        // setSource((prevState) => {
-        //     const array = [...prevState];
-        //     array[destIdx] = destPlayer;
-        //     array[sourceIdx] = sourcePlayer;
-        //     array.sort((a, b) => a.key - b.key);
-        //     return array
-        // })
     }
     // Panel-Team or Subs-Team
     const swapPlayers = (sourceIdx, destIdx, setSource, setDest, sourceId, destId, source, dest) => {
@@ -251,151 +257,88 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
 
         setSource(prevSource => {
             const array = [...prevSource]
-            array[sourceIdx].id = v4()
-            array[sourceIdx].name = ""
+            const player = resetPlayer(array[sourceIdx],"id")
+            array[sourceIdx] = player
+
             return array
         });
 
         if(destIdx >= 0 ) { // dropped onto another player in panel or Subs
             setDest( prevDest => {
-                const player = { ...tempSource };
-                player.key = v4();
-                player.position = 0;
-                player.positionName = "";
+                const array = [...prevDest]
+                const player = resetPlayer({...tempSource},"key")
                 return [
-                    ...prevDest.slice( 0, destIdx ),
+                    ...array.slice( 0, destIdx ),
                     player,
-                    ...prevDest.slice( destIdx + 1 )
+                    ...array.slice( destIdx + 1 )
                 ];
             } );
         } else { // dropped onto panel or subs
             setDest( prevDest => {
+                const array = [...prevDest]
                 const player = {...source[sourceIdx]}
-                player.key = v4();
-                player.position = 0;
-                player.positionName = "";
-                return [
-                    ...prevDest,
-                    player
-                ]
+                array.push(player)
+                return array
             } );
         }
     }
     // process drop onto the panel or subs container rather than onto a player
-    // const onDropContainer = (droppedBoxId, droppedBoxIndex, droppedBoxType, container) => {
-    //
-    //     const [sourceIdx, setSource, sourcePlayer, arrayStr] = findPlayer(droppedBoxId)
-    //     const dest    = container === "panel" ? panel    : container === "subs" ? subs    : team
-    //     const setDest = dest === panel        ? setPanel : dest ===  subs       ? setSubs : setTeam
-    //     const source  = arrayStr === "panel"  ? panel    : arrayStr === "subs"  ? subs    : team
-    //
-    //     // skip over any attempt to move onto same container
-    //     if (source === dest) return
-    //
-    //     // don't move around empty objects
-    //     if (source[sourceIdx].name === undefined || source[sourceIdx].name === "") return
-    //
-    //     if(container==="panel") {
-    //         moveTeamPlayer( sourceIdx,-1, setSource,setPanel, droppedBoxId,-1, source,panel)
-    //
-    //     } else { // must be "subs"
-    //         moveTeamPlayer( sourceIdx,-1, setSource,setSubs, droppedBoxId,-1, source, subs)
-    //     }
-    //
-    // }
-    // // process drop onto player rather than into a container
-    // const onDrop = (box , destId, item , sourceIndex)  => {
-    //     const sourceId = item.player.id
-    //     const [sourceIdx, setSource, sourcePlayer, sourceType, source2] = findPlayer(sourceId)
-    //     const [destIdx  , setDest  , destPlayer2 , destType, dest2]   = findPlayer(destId)
-    //
-    //     const source = sourceType === 'panel' ? panel: (sourceType === 'subs' ? subs: team);
-    //     let dest     = destType   === 'panel' ? panel: (destType   === 'subs' ? subs: team);
-    //
-    //     // don't move around empty objects
-    //     if (sourcePlayer.name === undefined || sourcePlayer.name === "") return
-    //
-    //     console.log('dest:', dest);
-    //     console.log('dest2:', dest2);
-    //
-    //     if (dest2 && dest2 instanceof Box) {
-    //         // Prevent calling onDropContainer when dropping onto a Box component
-    //         return;
-    //     }
-    //
-    //
-    //     if (dest === subs) {
-    //         if (source === panel) movePlayer(    sourceIdx,destIdx,   setPanel,setSubs,  sourcePlayer.id,destId, panel,subs )
-    //         if (source === subs)  swapPositions( sourceIndex,destIdx, setSubs,setSubs,   sourcePlayer.id,destId, subs, subs  )
-    //         if (source === team)  moveTeamPlayer(sourceIdx,destIdx,   setTeam,setSubs,   sourcePlayer.id,destId, team, subs  )
-    //
-    //     } else if (dest === panel) {
-    //         if (source === panel) swapPositions( sourceIndex,destIdx, setPanel,setPanel, sourcePlayer.id,destId, panel,panel )
-    //         if (source === subs)  movePlayer(    sourceIdx,destIdx,   setSubs,setPanel,  sourcePlayer.id,destId, subs, panel )
-    //         if (source === team)  moveTeamPlayer(sourceIdx,destIdx,   setTeam,setPanel,  sourcePlayer.id,destId, team, panel )
-    //
-    //     } else if (dest === team) {
-    //         if (source === panel) swapPlayers(   sourceIdx,destIdx,   setPanel,setTeam,  sourcePlayer.id,destId, panel,team  )
-    //         if (source === subs)  swapPlayers(   sourceIdx,destIdx,   setSubs,setTeam,   sourcePlayer.id,destId, subs, team  )
-    //         if (source === team)  swapPositions( sourceIdx,destIdx,   setTeam,setTeam,   sourcePlayer.id,destId, team, team  )
-    //     }
-    // }
-    const onDrop = (box, destId, item, sourceIndex) => {
-        const sourceId = item.player.id;
-        const [sourceIdx, setSource, sourcePlayer, sourceType, source2] = findPlayer(
-            sourceId
-        );
-        const [destIdx, setDest, destPlayer2, destType, dest2] = findPlayer(destId);
+    const onDropContainer = (droppedBoxId, droppedBoxIndex, droppedBoxType, container) => {
 
-        const source = sourceType === "panel" ? panel : sourceType === "subs" ? subs : team;
-        const dest =
-            destType === "panel" ? panel : destType === "subs" ? subs : team;
+        const [sourceIdx, setSource, sourcePlayer, arrayStr] = findPlayer(droppedBoxId)
+        const dest    = container === "panel" ? panel    : container === "subs" ? subs    : team
+        const setDest = dest === panel        ? setPanel : dest ===  subs       ? setSubs : setTeam
+        const source  = arrayStr === "panel"  ? panel    : arrayStr === "subs"  ? subs    : team
 
-        // Don't move empty objects
-        if (sourcePlayer.name === undefined || sourcePlayer.name === "") return;
+        // skip over any attempt to move onto same container
+        if (source === dest) return
 
-        if (dest2 && dest2 instanceof Box) {
-            // Prevent calling onDropContainer when dropping onto a Box component
-            return;
+        // don't move around empty objects
+        if (source[sourceIdx].name === undefined || source[sourceIdx].name === "") return
+
+        if(container==="panel") {
+            moveTeamPlayer( sourceIdx,-1, setSource,setPanel, droppedBoxId,-1, source,panel)
+
+        } else { // must be "subs"
+            moveTeamPlayer( sourceIdx,-1, setSource,setSubs, droppedBoxId,-1, source, subs)
         }
 
-        const container = dest2 === panel ? "panel" : dest2 === subs ? "subs" : "team";
-        const setContainer = dest2 === panel ? setPanel : dest2 === subs ? setSubs : setTeam;
+    }
+    // process drop onto player rather than into a container
+    const onDrop = (box , destId, item , sourceIndex)  => {
+        const sourceId = item.player.id
+        const [sourceIdx, setSource, sourcePlayer, sourceType, source2] = findPlayer(sourceId)
+        const [destIdx  , setDest  , destPlayer2 , destType, dest2]   = findPlayer(destId)
 
-        // If the drop is onto a container
-        if (container) {
-            // Skip over any attempt to move onto the same container
-            if (source === dest) return;
+        const source = sourceType === 'panel' ? panel: (sourceType === 'subs' ? subs: team);
+        let dest     = destType   === 'panel' ? panel: (destType   === 'subs' ? subs: team);
 
-            // Move the player to the new container
-            if (container === "panel") {
-                moveTeamPlayer(sourceIdx, -1, setSource, setPanel, sourceId, -1, source, panel);
-            } else {
-                moveTeamPlayer(sourceIdx, -1, setSource, setSubs, sourceId, -1, source, subs);
-            }
-        } else {
-            // If the drop is onto a player
-            if (dest === subs) {
-                if (source === panel)                    movePlayer(sourceIdx, destIdx, setPanel, setSubs, sourceId, destId, panel, subs);
-                if (source === subs)                    swapPositions(sourceIndex, destIdx, setSubs, setSubs, sourceId, destId, subs, subs);
-                if (source === team)                    moveTeamPlayer(sourceIdx, destIdx, setTeam, setSubs, sourceId, destId, team, subs);
-            } else if (dest === panel) {
-                if (source === panel)                    swapPositions(sourceIndex, destIdx, setPanel, setPanel, sourceId, destId, panel, panel);
-                if (source === subs)                    movePlayer(sourceIdx, destIdx, setSubs, setPanel, sourceId, destId, subs, panel);
-                if (source === team)                    moveTeamPlayer(sourceIdx, destIdx, setTeam, setPanel, sourceId, destId, team, panel);
-            } else if (dest === team) {
-                if (source === panel)                    swapPlayers(sourceIdx, destIdx, setPanel, setTeam, sourceId, destId, panel, team);
-                if (source === subs)                    swapPlayers(sourceIdx, destIdx, setSubs, setTeam, sourceId, destId, subs, team);
-                if (source === team)                    swapPositions(sourceIdx, destIdx, setTeam, setTeam, sourceId, destId, team, team);
-            }
+        // don't move around empty objects
+        if (sourcePlayer.name === undefined || sourcePlayer.name === "") return
+
+        console.log('dest:', dest);
+        console.log('dest2:', dest2);
+
+        if (dest === subs) {
+            if (source === panel) movePlayer(    sourceIdx,destIdx,   setPanel,setSubs,  sourcePlayer.id,destId, panel,subs )
+            if (source === subs)  swapPositions( sourceIndex,destIdx, setSubs,setSubs,   sourcePlayer.id,destId, subs, subs  )
+            if (source === team)  moveTeamPlayer(sourceIdx,destIdx,   setTeam,setSubs,   sourcePlayer.id,destId, team, subs  )
+
+        } else if (dest === panel) {
+            if (source === panel) swapPositions( sourceIndex,destIdx, setPanel,setPanel, sourcePlayer.id,destId, panel,panel )
+            if (source === subs)  movePlayer(    sourceIdx,destIdx,   setSubs,setPanel,  sourcePlayer.id,destId, subs, panel )
+            if (source === team)  moveTeamPlayer(sourceIdx,destIdx,   setTeam,setPanel,  sourcePlayer.id,destId, team, panel )
+
+        } else if (dest === team) {
+            if (source === panel) swapPlayers(   sourceIdx,destIdx,   setPanel,setTeam,  sourcePlayer.id,destId, panel,team  )
+            if (source === subs)  swapPlayers(   sourceIdx,destIdx,   setSubs,setTeam,   sourcePlayer.id,destId, subs, team  )
+            if (source === team)  swapPositions( sourceIdx,destIdx,   setTeam,setTeam,   sourcePlayer.id,destId, team, team  )
         }
-    };
-
+    }
     return (
     <div className="App">
-
         <DndProvider backend={HTML5Backend}>
-            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop}/>
+            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop} onDropContainer={onDropContainer}/>
         </DndProvider>
     </div>
   );
