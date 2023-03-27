@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import TeamsheetContainer from "./muigrid/VariableGrid";
+import TeamsheetContainer from "./TeamsheetContainers";
 import { DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
-import './App.css';
+import '../App.css';
 import {v4} from 'uuid';
-import Box from "./muigrid/Box";
+import Box from "./Box";
 
 export const showList = ( m,v ) => { console.log(m + v.map(m => {return "("+m.key+")(" + m.id + ") "+ m.name + " "}))}
 

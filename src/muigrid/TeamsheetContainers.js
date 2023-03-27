@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // import Bootstrap CSS
 import './VariableGrid.css'
 import './teamsheet.css'
  import { useEffect, useState } from "react";
- import {showList} from "../TeamsheetDnd";
+ import {showList} from "./TeamsheetDnd";
 
 const boxWidth         = 150
 const boxHeight        = 55
@@ -69,7 +69,11 @@ const PanelContainer = ({ panel, onDrop,onDropContainer }) => {
 
     showList("Panel-Container: " , panel)
     return (
+        <>
+        <Container className="panel-heading">Panel</Container>
+
         <Container className="panel-container" onDragOver={handleDragOver} ref={drop}>
+
             { panel.map(( member, index ) => {
                 const top = nextRow;
                 nextRow += 60; // Increment nextRow by 60 for the next iteration
@@ -92,6 +96,7 @@ const PanelContainer = ({ panel, onDrop,onDropContainer }) => {
                 );
             })}
         </Container>
+        </>
     );
 };
 
@@ -378,37 +383,41 @@ const SubsContainer  = ({ subs, onDrop, onDropContainer }) => {
     }));
 
         return (
-
-            <Container className="subs-container" onDragOver={handleDragOver} ref={drop}>
-                {subs.map((member) => {
-                    const top = nextRow;
-                    nextRow += 60; // Increment nextRow by 60 for the next iteration
-                    return (
-                        <Box
-                            index    = {index}
-                            key      = {member.id}
-                            id       = {member.id}
-                            x        = {0}
-                            y        = {top}
-                            width    = {150}
-                            height   = {50}
-                            player   = {member}
-                            onDrop   = {onDrop}
-                            style    = {{marginLeft     : "13px"}}
-                        />
-                    );
-                })}
-            </Container>
+            <>
+                <Container className="subs-heading"> <div style={{color:'white'}}>Substitutes</div> </Container>
+                <Container className="subs-container" onDragOver={handleDragOver} ref={drop}>
+                    {subs.map((member) => {
+                        const top = nextRow;
+                        nextRow += 60; // Increment nextRow by 60 for the next iteration
+                        return (
+                            <Box
+                                index    = {index}
+                                key      = {member.id}
+                                id       = {member.id}
+                                x        = {0}
+                                y        = {top}
+                                width    = {150}
+                                height   = {50}
+                                player   = {member}
+                                onDrop   = {onDrop}
+                                style    = {{marginLeft     : "13px"}}
+                            />
+                        );
+                    })}
+                </Container>
+            </>
         );
     };
 const ActionContainer = () => {
     return (
+        <>
         <Container className="action-container">
             <div className="btn-group d-flex" role="group">
                 <Button className="btn but-secondary " >Cancel</Button>
                 <Button type="submit" className="btn but-primary ">Save</Button>
             </div>
         </Container>
+        </>
     );
 };
 

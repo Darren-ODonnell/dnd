@@ -2,7 +2,7 @@
 .teamsheet-container {
     width: 1000px;
     height: 800px;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     background-color: lightblue;
     position: absolute;
     top: 0%;
@@ -19,13 +19,14 @@
     align-items: center;
     margin: 0 auto;
     background-color: mediumpurple;
+
 }
 
-.panel-container     {
+.panel-heading  {
     display: flex;
     width           : 18%;
-    height          : 100%;
-    border          : 1px solid red;
+    height          : 50px;
+    /*border          : 1px solid red;*/
     float           : left;
     position        : absolute;
     top             : 0;
@@ -34,13 +35,32 @@
     max-width: 18%;
     overflow: auto;
     background-color: mediumpurple;
+    color: white;
+    font-weight: bold;
+    font-size: x-large;
 }
+
+.panel-container {
+    display: flex;
+    width: 18%;
+    height: 93.5%;
+    /*border: 1px solid red;*/
+    float: left;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    max-height: 100%;
+    max-width: 18%;
+    overflow: auto;
+    background-color: mediumpurple;
+}
+
 .team-container      {
     position        : absolute;
     top             : 0;
     width           : 64%;
     height          : 90%;
-    border          : 1px solid green;
+    /*border          : 1px solid green;*/
     background-image: url('../media/GAA Pitch2.png');
     background-size : 100% 100%;
     max-width       : 64%;
@@ -49,9 +69,10 @@
 }
 .subs-container      {
     width           : 18%;
-    height          : 100%;
-    border          : 1px solid purple;
+    height          : 93.5%;
+    /*border          : 1px solid purple;*/
     float           : right;
+    top             : 50px;
     position        : absolute;
     right           : 0;
     background-color: mediumpurple;
@@ -59,12 +80,31 @@
     max-width       : 18%;
     overflow        : auto;
 }
+.subs-heading  {
+    z-index: 1;
+    font-family: Arial, Helvetica, sans-serif;
+    display         : flex;
+    width           : 18%;
+    height          : 50px;
+    /*border          : 1px solid red;*/
+    float           : right;
+    position        : absolute;
+    top             : 0;
+    right           : 0;
+    max-height      : 100%;
+    max-width       : 18%;
+    overflow        : auto;
+    background-color: mediumpurple;
+    color: white !important;
+    font-weight: bold !important;
+    font-size: x-large !important;
+}
 .action-container    {
     position        : absolute;
     bottom          : 0;
     width           : 64%;
     height          : 10%;
-    border          : 1px solid pink;
+    /*border          : 1px solid pink;*/
     display         : flex;
     /*justify-content : space-between;*/
     align-items: center;

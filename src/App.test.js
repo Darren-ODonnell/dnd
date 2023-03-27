@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import App from './TeamsheetDnd';
+import App from './muigrid/TeamsheetDnd';
 
 test('renders learn react link', () => {
   render(<App />);
