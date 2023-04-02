@@ -3,43 +3,46 @@ import styled from "styled-components";
 import React, { useRef, useEffect } from 'react';
 
 const BoxWrapper = styled.div`
-  position: absolute;
-  width: ${(props) => props.width}px;
-  height: ${(props) => props.height}px;
-  top: ${(props) => props.y}px;
-  left: ${(props) => props.x}px;
-  border-radius: 10px;
-  border: 5px solid lightblue;
-  display: flex;
-  font-size: 20px;
-  cursor: move;
-  draggable: true;
-  background-color: ${(props) => (props.isOver ? "lightblue" : "lightgray")};
-  margin: 0 auto;
-  justify-content: center;
-  align-items: center;
-  opacity: ${(props) => (props.isDragging ? 0.5 : 1)};
+  position        : absolute;
+  width           : ${(props) => props.width}px;
+  height          : ${(props) => props.height}px;
+  top             : ${(props) => props.y}px;
+  left            : ${(props) => props.x}px;
+  border-radius   : 10px;
+  border          : 5px solid lightblue;
+  display         : flex;
+  font-size       : 20px;
+  cursor          : move;
+  draggable       : true;
+  background-color: ${(props) => (props.isOver ? "lightblue": "lightgray")};
+  margin          : 0 auto;
+  justify-content : center;
+  align-items     : center;
+  opacity         : ${(props) => (props.isDragging ? 0.5    : 1)};
 `;
 
-const Box = ({ index, id, player, width, height, x, y, onDrop, style }) => {
+const Box = ({ index, id, player, width, height, x, y, onDrop, style, source , getSource}) => {
     const ref = useRef(null);
+    let array = typeof getSource === 'function' ? getSource() : []
 
     const handleClick = (id) => {
         // Call the onClick callback function with the box id
-        console.log("HandleClick: " + id)
+        console.log("HandleClick: " + player.id)
     };
 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "ITEM",
         item: () => {
-            console.log("HandleDragBegin: " + id);
-            return { id, player, index };
+            console.log("HandleDragBegin: " + player.id);
+            console.log("player: " + JSON.stringify(player));
+            console.log("Source: ", source.map(s=>{return s.id+ " - "+ s.name}));
+
+            return { id:player.id, player, index };
         },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
     }));
-
 
     const [{ canDrop, isOver }, drop] = useDrop(() => ({
         accept: "ITEM",
@@ -88,11 +91,11 @@ const Box = ({ index, id, player, width, height, x, y, onDrop, style }) => {
     return (
         <div className="box" >
             <BoxWrapper
-                ref={ref}
-                style={styles}
-                isDragging={isDragging}
-                isOver={isOver}
-                onClick={() => handleClick(id)}
+                ref        = {ref}
+                style      = {styles}
+                isDragging = {isDragging}
+                isOver     = {isOver}
+                onClick    = {() => handleClick(id)}
             >
                 {player.name}
             </BoxWrapper>

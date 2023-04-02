@@ -8,10 +8,16 @@ import Box from "./Box";
 
 export const showList = ( m,v ) => { console.log(m + v.map(m => {return "("+m.key+")(" + m.id + ") "+ m.name + " "}))}
 
+
+
 const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     const [panel, setPanel] = useState( myPanel );
     const [subs , setSubs]  = useState( mySubs );
     const [team , setTeam]  = useState( myTeam );
+
+    const getSource = () => {
+        return panel
+    }
 
     const findPlayer = (id) => {
         const idx1 = panel.findIndex(p => p.id === id)
@@ -338,7 +344,7 @@ const TeamsheetDnd = ({myTeam, myPanel, mySubs}) =>{
     return (
     <div className="App">
         <DndProvider backend={HTML5Backend}>
-            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop} onDropContainer={onDropContainer}/>
+            <TeamsheetContainer panel={panel} team={team} subs={subs} onDrop={onDrop} onDropContainer={onDropContainer} getSource={getSource}/>
         </DndProvider>
     </div>
   );

@@ -22,18 +22,14 @@ export const findId = (id, array) => {
 }
 
 
-const TeamsheetContainer = ({panel, team, subs, onDrop,onDropContainer}) => {
-    // const handleDrop = (box, containerId) => {
-    //     // handle the drop event
-    //     console.log("Box dropped into container", containerId);
-    //     onDrop()
-    // };
 
 
+
+const TeamsheetContainer = ({panel, team, subs, onDrop,onDropContainer, getSource}) => {
 
     return (
         <Container className="teamsheet-container container mx-auto" style={{height:'800px'}}>
-            <PanelContainer   panel={panel} onDrop={onDrop} onDropContainer={onDropContainer} />
+            <PanelContainer   panel={panel} onDrop={onDrop} onDropContainer={onDropContainer} getSource={getSource}/>
             <TeamContainer    team ={team}  onDrop={onDrop} />
             <SubsContainer    subs ={subs}  onDrop={onDrop} onDropContainer={onDropContainer}/>
             <ActionContainer                  />
@@ -42,13 +38,11 @@ const TeamsheetContainer = ({panel, team, subs, onDrop,onDropContainer}) => {
 }
 export default TeamsheetContainer;
 
-const PanelContainer = ({ panel, onDrop,onDropContainer }) => {
+const PanelContainer = ({ panel, onDrop,onDropContainer, getSource }) => {
     const container = "panel"
-    let nextRow = 0
-    let index = 0;
-    let id
+    let nextRow = 0;
 
-    const handleDragOver = (event) => {
+    const handleDragOver = (event, id, index) => {
         event.preventDefault();
         event.stopPropagation();
         event.dataTransfer.setData("boxId", id);
@@ -78,7 +72,7 @@ const PanelContainer = ({ panel, onDrop,onDropContainer }) => {
                 const top = nextRow;
                 nextRow += 60; // Increment nextRow by 60 for the next iteration
 
-                console.log("Index: "+index+ ", id: "+member.id+", name: " +member.name)
+                // console.log("Index: "+index+ ", id: "+member.id+", name: " +member.name)
 
                 return (
                     <Box
@@ -92,6 +86,11 @@ const PanelContainer = ({ panel, onDrop,onDropContainer }) => {
                         y       = {top}
                         onDrop  = {onDrop}
                         style   = {{marginLeft : "5px"}}
+                        source   = {panel}
+                        getSource={getSource}
+                        onDragOver={(event) =>
+                            handleDragOver(event, member.id, index)
+                        }
                     />
                 );
             })}
@@ -246,6 +245,7 @@ const TeamContainer   = ({ team, onDrop}) => {
                     player          = {left}
                     onDrop          = {onDrop}
                     style           = {{margin : "0px", fontWeight: "bold"}}
+                    source   = {team}
                 />
             )
         }
@@ -261,6 +261,7 @@ const TeamContainer   = ({ team, onDrop}) => {
                     player={middle}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
+                    source   = {team}
                 />
             )
         }
@@ -276,6 +277,7 @@ const TeamContainer   = ({ team, onDrop}) => {
                     player={right}
                     onDrop={onDrop}
                     style = {{margin: "0px", fontWeight: "bold"}}
+                    source   = {team}
                 />
             )
         }
@@ -300,6 +302,8 @@ const TeamContainer   = ({ team, onDrop}) => {
                     player = {left}
                     onDrop = {onDrop}
                     style  = {{margin: "0px", fontWeight: "bold"}}
+                    source   = {team}
+
                 />
             )
         }
@@ -316,6 +320,8 @@ const TeamContainer   = ({ team, onDrop}) => {
                     player = {right}
                     onDrop = {onDrop}
                     style  = {{margin : "0px", fontWeight : "bold"}}
+                    source   = {team}
+
                 />
             )
         }
@@ -340,6 +346,8 @@ const TeamContainer   = ({ team, onDrop}) => {
                     player = {middle}
                     onDrop = {onDrop}
                     style  = {{margin     : "0px", fontWeight: "bold"}}
+                    source   = {team}
+
                 />
             )
         }
@@ -361,10 +369,9 @@ const TeamContainer   = ({ team, onDrop}) => {
 const SubsContainer  = ({ subs, onDrop, onDropContainer }) => {
     const container="subs"
     let nextRow = 0
-    let index = 0;
-    let id
 
-    const handleDragOver = (event) => {
+
+    const handleDragOver = (event,id, index) => {
         event.preventDefault();
         event.stopPropagation();
         event.dataTransfer.setData("boxId", id);
@@ -386,7 +393,7 @@ const SubsContainer  = ({ subs, onDrop, onDropContainer }) => {
             <>
                 <Container className="subs-heading"> <div style={{color:'white'}}>Substitutes</div> </Container>
                 <Container className="subs-container" onDragOver={handleDragOver} ref={drop}>
-                    {subs.map((member) => {
+                    {subs.map((member, index) => {
                         const top = nextRow;
                         nextRow += 60; // Increment nextRow by 60 for the next iteration
                         return (
@@ -401,6 +408,10 @@ const SubsContainer  = ({ subs, onDrop, onDropContainer }) => {
                                 player   = {member}
                                 onDrop   = {onDrop}
                                 style    = {{marginLeft     : "13px"}}
+                                source   = {subs}
+                                onDragOver={(event) =>
+                                    handleDragOver(event, member.id, index)
+                                }
                             />
                         );
                     })}
